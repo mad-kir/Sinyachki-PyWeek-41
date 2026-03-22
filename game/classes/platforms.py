@@ -11,4 +11,5 @@ class Platform(pygame.sprite.Sprite):
 
         self.image_surf = pygame.Surface((tile_size, tile_size))
         self.image = image
+        #self.image_surf.fill((255, 0, 0))
         self.rect = pygame.Rect(x, y, tile_size, tile_size)
