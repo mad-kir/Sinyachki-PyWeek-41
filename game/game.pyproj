@@ -21,6 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
   </ItemGroup>
   <ItemGroup>
