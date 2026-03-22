@@ -2,6 +2,7 @@ import pygame
 
 import numpy as np
 from classes.platforms import Platform
+from classes.player import Player
 
 placeholder_color = pygame.color.Color(255, 0, 255)
 
@@ -15,12 +16,14 @@ def load_level(level_number, tile_size):
 
     print('level width ', level_width, '| level height ', level_height)
 
-    all_sprites = pygame.sprite.Group()
+    platforms = pygame.sprite.Group()
 
     for row in range(len(level)):
         for col in range(len(level[row])):
+            
+            #загрузка платформ
             if level[row][col] == 0:
-                #загрузка текстур для платформ
+                
                 try:
                     if level_number == 0:
                         image = pygame.image.load(''.join(('images/tileset_day/ground_', str(level[row][col]), '.png')))
@@ -36,16 +39,28 @@ def load_level(level_number, tile_size):
                     image = pygame.Surface((tile_size, tile_size))
                     image.fill(placeholder_color)
                     
-                all_sprites.add(Platform(col*tile_size, row*tile_size, tile_size, image))
+                platforms.add(Platform(col*tile_size, row*tile_size, tile_size, image))
 
-            #загрузка текстур игрока
+            #загрузка игрока
+            if level[row][col] == 1:
+
+                try:
+                    if level_number == 0:
+                        image = pygame.image.load(''.join(('images/tileset_day/player_', str(level[row][col]), '.png')))
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                
+                player = Player(col*tile_size, row*tile_size, tile_size, tile_size, image)
+                
 
             #врага
 
             #интерактивных предметов
 
 
-    return all_sprites, level_width, level_height
+    return platforms, level_width, level_height, player
 
 def set_background(number):
     '''
