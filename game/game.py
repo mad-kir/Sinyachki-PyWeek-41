@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 
+from windows.quit_window import game_quit
 
 def main():
 
@@ -12,6 +13,7 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     
     running = True
+
     while running:
         clock.tick(fps)
         
@@ -19,7 +21,11 @@ def main():
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                running = game_quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = game_quit()
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
 

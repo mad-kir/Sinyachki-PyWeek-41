@@ -23,12 +23,19 @@
   <ItemGroup>
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
+    <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />
     <Folder Include="classes\" />
     <Folder Include="levels\" />
+    <Folder Include="windows\" />
     <Folder Include="sounds\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\здесь сохранять спрайты" />
+    <Content Include="levels\здесь тайлмапы новых уровней в формате номер csv" />
+    <Content Include="sounds\здесь сохранять звуковые эффекты и саундтрек" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
