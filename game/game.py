@@ -3,15 +3,24 @@ import pygame
 pygame.init()
 
 from windows.quit_window import game_quit
+from levels.level_manager import load_level
 
 def main():
 
     fps = 60
     clock = pygame.time.Clock()
 
+    '''
+    https://www.daniweb.com/programming/software-development/threads/54881/pygame-get-screen-size 
+    изучить потом, чтобы сделать окно подстраивающимся под размеры экрана. вывести это в окно настройки?
+    '''
+
     screen_width, screen_height = 800, 600
     screen = pygame.display.set_mode((screen_width, screen_height))
     
+    '''для отладки, удалить позже'''
+    load_level(0) 
+
     running = True
 
     while running:
