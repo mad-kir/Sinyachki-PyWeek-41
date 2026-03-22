@@ -1,10 +1,54 @@
 import pygame
 
 import numpy as np
+from classes.platforms import Platform
 
-def load_level(number):
+placeholder_color = pygame.color.Color(255, 0, 255)
+
+def load_level(level_number, tile_size):
     
-    level = np.genfromtxt(''.join(('levels/', str(number), '.csv')), delimiter=',', dtype='int')
+    level = np.genfromtxt(''.join(('levels/', str(level_number), '.csv')), delimiter=',', dtype='int')
     
-    print('level loaded:')
-    print(level)
+    print('level loaded')
+
+    level_width, level_height = len(level[0])*tile_size, len(level)*tile_size
+
+    print('level width ', level_width, '| level height ', level_height)
+
+    all_sprites = pygame.sprite.Group()
+
+    for row in range(len(level)):
+        for col in range(len(level[row])):
+            if level[row][col] == 0:
+                #загрузка текстур для платформ
+                try:
+                    if level_number == 0:
+                        image = pygame.image.load(''.join(('images/tileset_day/ground_', str(level[row][col]), '.png')))
+                    else:
+
+                        '''
+                        нарисовать плейсхолдер для ночи, сделать 1 уровень
+                        '''
+
+                        image = pygame.image.load(''.join(('images/tileset_night/ground_', str(level[row][col]), '.png')))
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                    
+                all_sprites.add(Platform(col*tile_size, row*tile_size, tile_size, image))
+
+            #загрузка текстур игрока
+
+            #врага
+
+            #интерактивных предметов
+
+
+    return all_sprites, level_width, level_height
+
+def set_background(number):
+    '''
+    В будущем тут будет проверяться номер уровня и назначаться фоновое изображение. Но пока что будем просто заливать всё одним цветом.
+    '''
+    return pygame.color.Color(50, 200, 200)
