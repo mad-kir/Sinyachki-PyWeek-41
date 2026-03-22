@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 
 from windows.quit_window import game_quit
-from levels.level_manager import load_level
+from levels.level_manager import load_level, set_background
 
 def main():
 
@@ -15,11 +15,17 @@ def main():
     изучить потом, чтобы сделать окно подстраивающимся под размеры экрана. вывести это в окно настройки?
     '''
 
-    screen_width, screen_height = 800, 600
+    screen_width, screen_height = 1000, 800
     screen = pygame.display.set_mode((screen_width, screen_height))
     
+    tile_size = 16
+
+
     '''для отладки, удалить позже'''
-    load_level(0) 
+    sprites, level_width, level_height = load_level(0, tile_size) 
+    background_color = set_background(0)
+
+    
 
     running = True
 
@@ -39,6 +45,12 @@ def main():
         #---ОБНОВЛЕНИЕ ИГРЫ---
 
         #---ОТРИСОВКА---
+
+        screen.fill(background_color)
+
+        for sprite in sprites:
+
+            screen.blit(sprite.image, sprite.rect)
         
         pygame.display.flip()
     

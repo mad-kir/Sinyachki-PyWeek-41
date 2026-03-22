@@ -21,6 +21,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="classes\camera.py" />
+    <Compile Include="classes\enemy.py" />
+    <Compile Include="classes\items.py" />
+    <Compile Include="classes\platforms.py" />
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
     <Compile Include="levels\level_manager.py" />
@@ -36,7 +40,6 @@
   <ItemGroup>
     <Content Include="images\здесь сохранять спрайты" />
     <Content Include="levels\0.csv" />
-    <Content Include="levels\0 csv создан просто для тестов" />
     <Content Include="sounds\здесь сохранять звуковые эффекты и саундтрек" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
