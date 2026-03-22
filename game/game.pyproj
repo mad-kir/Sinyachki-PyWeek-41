@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
+    <Compile Include="levels\level_manager.py" />
     <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>
@@ -34,7 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\здесь сохранять спрайты" />
-    <Content Include="levels\здесь тайлмапы новых уровней в формате номер csv" />
+    <Content Include="levels\0.csv" />
+    <Content Include="levels\0 csv создан просто для тестов" />
     <Content Include="sounds\здесь сохранять звуковые эффекты и саундтрек" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
