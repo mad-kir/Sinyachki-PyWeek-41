@@ -28,12 +28,12 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.jumps_remaining = 2
         self.gravity = 0.5
-        self.jump_power = -5
+        self.jump_power = -7
         self.max_fall_speed = 15
 
         self.alive = True
 
-    def update(self,screen, platforms, camera, enemy):
+    def update(self,screen, platforms, items, camera, enemy):
         
         #гравитация
         #print('on ground is ', self.on_ground)
@@ -45,6 +45,11 @@ class Player(pygame.sprite.Sprite):
         else:
             self.velocity_y = 0
 
+            """
+            СЮДА ВСТАВИТЬ ЗВУК ПРИЗЕМЛЕНИЯ
+            НИЖЕ: ПОДУМАТЬ, КАК ВСТАВИТЬ ЗВУКИ БЕГА
+            """
+
         #обновление положения по горизонтали
         self.rect.x += self.velocity_x
 
@@ -55,6 +60,14 @@ class Player(pygame.sprite.Sprite):
                 
                 elif self.velocity_x < 0:
                     self.rect.left = platform.rect.right
+
+        for item in items:
+            if self.rect.colliderect(item.rect) and not item.can_pass:
+                if self.velocity_x > 0:
+                    self.rect.right = item.rect.left
+                
+                elif self.velocity_x < 0:
+                    self.rect.left = item.rect.right
 
         #обновление положения по вертикали
         self.rect.y += self.velocity_y
@@ -79,12 +92,30 @@ class Player(pygame.sprite.Sprite):
                     self.on_ground = False
                     #print('jumps remaining ', self.jumps_remaining, 'on ground False')
 
-        if self.rect.colliderect(enemy.rect):
-            if self.alive:
-                print('THE PLAYER GOT KILLED')
-                enemy.state, enemy.velocity_x = 'IDLE', 0
-                self.alive = False
-                camera.fade_out(screen)
+        for item in items:
+            if self.rect.colliderect(item.rect) and not item.can_pass:
+                if self.velocity_y > 0:
+                    self.rect.bottom = item.rect.top
+                    self.velocity_y = 0
+                    self.on_ground = True
+                    self.jumps_remaining = 2
+                
+                elif self.velocity_y < 0:
+                    self.rect.top = item.rect.bottom
+                    self.velocity_y = 0
+                    self.on_ground = False
+
+        if enemy:
+            if self.rect.colliderect(enemy.rect):
+                if self.alive:
+                    print('THE PLAYER GOT KILLED')
+                    enemy.state, enemy.velocity_x = 'IDLE', 0
+                    self.alive = False
+                    camera.fade_out(screen)
+
+                    """
+                    СЮДА ВСТАВИТЬ ЗВУК СМЕРТИ
+                    """
             
 
     def jump(self):
@@ -100,4 +131,8 @@ class Player(pygame.sprite.Sprite):
             self.jumps_remaining -= 1
             return True
         return False
+
+    """
+    СЮДА ДОБАВИТЬ ЗВУКИ ПРЫЖКОВ
+    """
 

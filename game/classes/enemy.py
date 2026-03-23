@@ -2,7 +2,7 @@ from re import I, L
 import pygame
 
 import numpy as np
-import random
+import time
 
 import pygame.surface
 
@@ -25,11 +25,11 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity_x = 0
         self.velocity_y = 0
         
-        self.speed = 4
+        self.speed = 5
 
         self.on_ground = False
         self.gravity = 0.5
-        self.jump_power = -8
+        self.jump_power = -7
         self.max_fall_speed = 10
 
         self.alive = False
@@ -37,11 +37,15 @@ class Enemy(pygame.sprite.Sprite):
         self.target = None
         self.state = 'IDLE'
 
+        self.detect_timer = None
+        self.detect_delay = 1
+
         level = np.array([])
 
     def destroy_enemy(self):
         self.alive = False
         self.rect = pygame.Rect(0, 0, 0, 0)
+        print('enemy destroyed')
         
     def create_enemy(self, x, y, state, target, level):
         self.alive = True
@@ -69,7 +73,7 @@ class Enemy(pygame.sprite.Sprite):
             self.velocity_y = self.jump_power
             self.on_ground = False
     
-    def update(self, platforms):
+    def update(self, platforms, camera):
 
         if not self.alive:
             return
@@ -114,20 +118,21 @@ class Enemy(pygame.sprite.Sprite):
 
         # дерево решений
 
-        """
+        if self.state == 'IDLE':
+            if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*3):
+                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /2 ', camera.width/(camera.zoom*3), '| can see the player')
+                
+                if self.detect_timer == None:
+                    self.detect_timer = time.time()
 
-        target location on level
-        self location on level
-        check if platforms between self and target
-            if not go directly by x
-            elif yes try (check if there's a platform above that plaltform
-                    if no go check if it's right next to self
-                        if yes jump while moving by x)
-                    except(go in the opposite direction, get behind the camera and then die)
+                print('the enemy is processing...')
+                time_passed = time.time() - self.detect_timer
+                if time_passed >= self.detect_delay:
+                    print('start chasing')
+                    self.state = 'CHASE'
 
-        """
-
-        if self.state == 'CHASE':
+        if self.state == 'SEARCH':
+            
             target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
             target_location_y = int(self.target.rect.y / 16)
 
@@ -136,8 +141,34 @@ class Enemy(pygame.sprite.Sprite):
 
             can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y)
             print('can pass = ', can_pass)
+
+        if self.state == 'CHASE':
+            if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom*3):
+                found, create_on_y = self.find_place_to_create(camera, platforms)
+                if found:
+                    self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom)), self.target.rect.y, 'SEARCH', self.target, self.level)
+                else:
+                    print('COULD NOT FIND A SPACE TO CREATE THE ENEMY')
+
+            target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
+            target_location_y = int(self.target.rect.y / 16)
+
+            self_location_x = int(self.rect.x / 16)
+            self_location_y = int(self.rect.y / 16)
+
+            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y)
+            print('can pass = ', can_pass)
+
             
-            
+    def find_place_to_create(self, camera, platforms):
+        check_rect = pygame.Rect(self.target.rect.x-int(camera.width/(camera.zoom*4)), self.target.rect.y, self.rect.width, self.rect.height)
+        for platform in platforms:
+            if self.rect.colliderect(platform.rect):
+                check_rect.y -= check_rect.height
+            else:
+                return True, check_rect.y
+        return False, 0
+        
 
     def check_platforms(self, self_location_x, self_location_y, target_location_x, target_location_y):
         print('checking for platforms..')
@@ -146,6 +177,9 @@ class Enemy(pygame.sprite.Sprite):
 
         dist_x = abs(self_location_x - target_location_x) #count distance
         dist_y = abs(self_location_y - target_location_y)
+
+        if self_location_x == target_location_x: #доработать, что делать если игрок находится под
+            self.jump()
 
         if self_location_x <= target_location_x:
             step = 1
@@ -166,8 +200,8 @@ class Enemy(pygame.sprite.Sprite):
                         check_y += 1
                 self.move_x(step)
             else: #block ahead
-                if level[check_y-1][check_x] == -1: #the tile above is free
-                    check_y -= 1
+                if level[check_y-2][check_x] == -1: #the second tile from above is free
+                    check_y -= 2
                     self.jump()
                     self.move_x(step)
                 else:
