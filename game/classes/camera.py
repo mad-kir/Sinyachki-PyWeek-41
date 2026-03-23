@@ -1,4 +1,6 @@
+from encodings.punycode import T
 import pygame 
+import time
 
 class Camera:
     def __init__(self, width, height):
@@ -12,6 +14,11 @@ class Camera:
 
         self.dead_zone_width = 150
         self.dead_zone_height = 100
+
+        #эффекты
+        #self.fade_alpha = 0
+        self.fade_surface = pygame.Surface((self.width, self.height))
+        self.fade_surface.fill((0, 0, 0))
 
 
     def apply(self, entity):
@@ -30,7 +37,8 @@ class Camera:
 
         return pygame.Rect(x, y, width, height)
 
-    def update(self, target):
+    def update(self, target, screen):
+
         x = (target.rect.centerx - self.width / 2)
         y = (target.rect.centery/ 2)
 
@@ -58,3 +66,27 @@ class Camera:
     def set_bounds(self, level_width, level_height):
         self.camera.left = max(-(level_width - self.width), min(0, self.camera.left))
         self.camera.top = max(-(level_height - self.height), min(0, self.camera.top))
+
+
+
+    #эффекты
+
+    def fade_out(self, screen):
+        print('triggered fade out')
+        self.fade_surface = pygame.Surface((self.width, self.height))
+        self.fade_surface = self.fade_surface.convert()
+        self.fade_surface.fill((0, 0, 0))
+
+        start_time = time.time()
+        duration = 5
+
+        for i in range(255):
+            time_dif = round(time.time() - start_time, 2)
+            alpha_goal = int((time_dif / duration) * 255)
+            
+            alpha = min(alpha_goal, 255)
+            self.fade_surface.set_alpha(alpha)
+            screen.blit(self.fade_surface, (0, 0))
+            
+            pygame.display.flip()
+        
