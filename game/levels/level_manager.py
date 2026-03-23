@@ -3,6 +3,7 @@ import pygame
 import numpy as np
 from classes.platforms import Platform
 from classes.player import Player
+from classes.enemy import Enemy
 
 placeholder_color = pygame.color.Color(255, 0, 255)
 
@@ -56,11 +57,24 @@ def load_level(level_number, tile_size):
                 
 
             #врага
+            if level[row][col] == 2:
 
+                try:
+                    if level_number == 0:
+                        image = pygame.image.load(''.join(('images/tileset_day/enemy_', str(level[row][col]), '.png')))
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                
+                enemy = Enemy(tile_size, tile_size, image)
+                enemy_spawn_xy = [col*tile_size, row*tile_size]
+                print('try enemy spawn on ', enemy_spawn_xy)
             #интерактивных предметов
 
 
-    return platforms, level_width, level_height, player
+
+    return platforms, level_width, level_height, player, enemy, enemy_spawn_xy
 
 def set_background(number):
     '''

@@ -6,6 +6,7 @@ from windows.quit_window import game_quit
 from levels.level_manager import load_level, set_background
 from classes.player import Player
 from classes.camera import Camera
+from classes.enemy import Enemy
 
 def main():
 
@@ -24,11 +25,13 @@ def main():
 
     camera = Camera(screen_width, screen_height)
 
+
     '''для отладки, удалить позже'''
-    platforms, level_width, level_height, player = load_level(0, tile_size) 
+    platforms, level_width, level_height, player, enemy, enemy_spawn_xy = load_level(0, tile_size) 
     background_color = set_background(0)
     camera.set_bounds(level_width, level_height)
-    
+    enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'IDLE', player) #заспавнить врага и назначить следить за игроком
+
 
     running = True
 
@@ -64,9 +67,11 @@ def main():
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
 
-        player.update(platforms)
+        player.update(platforms, enemy)
 
         camera.update(player)
+
+        enemy.update(platforms)
 
         #---ОТРИСОВКА---
 
@@ -81,6 +86,10 @@ def main():
         player_rect_transformed = camera.apply(player)
         player_image_transformed = pygame.transform.scale(player.image, (32, 32))
         screen.blit(player_image_transformed, player_rect_transformed)
+
+        enemy_rect_transformed = camera.apply(enemy)
+        enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
+        screen.blit(enemy_image_transformed, enemy_rect_transformed)
         
 
         pygame.display.flip()

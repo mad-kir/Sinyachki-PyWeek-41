@@ -26,7 +26,6 @@ class Player(pygame.sprite.Sprite):
         self.speed = 6
 
         self.on_ground = False
-        #self.can_double_jump = True
         self.jumps_remaining = 2
         self.gravity = 0.5
         self.jump_power = -5
@@ -34,7 +33,7 @@ class Player(pygame.sprite.Sprite):
 
         self.alive = True
 
-    def update(self, platforms):
+    def update(self, platforms, enemy):
         
         #гравитация
         #print('on ground is ', self.on_ground)
@@ -79,6 +78,9 @@ class Player(pygame.sprite.Sprite):
                     self.velocity_y = 0
                     self.on_ground = False
                     #print('jumps remaining ', self.jumps_remaining, 'on ground False')
+
+        if self.rect.colliderect(enemy.rect):
+            print('THE PLAYER GOT KILLED')
 
     def jump(self):
         #print('jump is triggered. at start, jumps remaining ', self.jumps_remaining, ' and on ground is ', self.on_ground)
