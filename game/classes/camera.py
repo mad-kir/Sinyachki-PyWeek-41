@@ -51,8 +51,8 @@ class Camera:
         self.camera.x += self.offset.x
         self.camera.y += self.offset.y
 
-        print(self.camera.x, self.camera.y)
-        print(self.offset)
+        #print(self.camera.x, self.camera.y)
+        #print(self.offset)
 
 
     def set_bounds(self, level_width, level_height):
