@@ -22,18 +22,36 @@ class Camera:
 
 
     def apply(self, entity):
-        x = entity.rect.x - self.camera.x
-        y = entity.rect.y - self.camera.y
         
-        center_x = self.width / 2
-        center_y = self.height / 2  
-        x = center_x + (x - center_x) * self.zoom
-        y = center_y + (y - center_y) * self.zoom
+        try:
+            x = entity.rect.x - self.camera.x
+            y = entity.rect.y - self.camera.y
 
-        #print(self.camera.x, self.camera.y)
+            center_x = self.width / 2
+            center_y = self.height / 2  
+            x = center_x + (x - center_x) * self.zoom
+            y = center_y + (y - center_y) * self.zoom
 
-        width = entity.rect.width * self.zoom
-        height = entity.rect.height * self.zoom
+            #print(self.camera.x, self.camera.y)
+
+            width = entity.rect.width * self.zoom
+            height = entity.rect.height * self.zoom
+
+        except:
+            x = entity.x - self.camera.x
+            y = entity.y - self.camera.y
+
+            center_x = self.width / 2
+            center_y = self.height / 2  
+            x = center_x + (x - center_x) * self.zoom
+            y = center_y + (y - center_y) * self.zoom
+
+
+            width = entity.width * self.zoom
+            height = entity.height * self.zoom
+
+        
+        
 
         return pygame.Rect(x, y, width, height)
 

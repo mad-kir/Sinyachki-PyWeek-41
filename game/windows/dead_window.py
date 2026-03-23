@@ -3,7 +3,7 @@ import pygame
 def game_over(screen, screen_width, screen_height):
     
     
-    font = pygame.font.SysFont('times new roman', 40)
+    font = pygame.font.SysFont('fonts/RetroSans.ttf', 60)
     text_surf = font.render('Вы мертвы.', True, (255, 0, 0))
     text_rect = text_surf.get_rect()
     text_rect.midtop = (screen_width/2, screen_height/2)

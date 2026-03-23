@@ -3,23 +3,51 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "0.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "0.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 682,
+                "y": 453.99999999999994
+            }
+        },
+        "1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1410.3333333333333,
+                "y": 1347.6666666666665
+            }
+        },
+        "placeholder day.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 11
+        },
+        "placeholder night.tsx": {
+            "scaleInEditor": 1
+        }
     },
     "last.exportedFilePath": "D:/Game Projects/pygame_projects/pyweek 41/game/levels",
     "last.imagePath": "D:/Game Projects/pygame_projects/pyweek 41/tiled prj",
-    "map.height": 50,
+    "map.height": 100,
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 100,
+    "map.width": 400,
     "openFiles": [
+        "placeholder day.tsx",
+        "0.tmx"
     ],
     "project": "pyweek41.tiled-project",
     "recentFiles": [
+        "placeholder night.tsx",
+        "placeholder day.tsx",
+        "0.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

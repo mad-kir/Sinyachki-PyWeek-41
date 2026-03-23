@@ -29,9 +29,11 @@
     <Compile Include="game.py" />
     <Compile Include="levels\level_manager.py" />
     <Compile Include="windows\dead_window.py" />
+    <Compile Include="windows\dialogue_window.py" />
     <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="fonts\" />
     <Folder Include="images\" />
     <Folder Include="classes\" />
     <Folder Include="levels\" />
@@ -39,6 +41,7 @@
     <Folder Include="sounds\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="fonts\RoyaltyMono.ttf" />
     <Content Include="images\здесь сохранять спрайты" />
     <Content Include="levels\0.csv" />
     <Content Include="sounds\здесь сохранять звуковые эффекты и саундтрек" />
