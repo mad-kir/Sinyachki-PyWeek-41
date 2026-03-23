@@ -74,7 +74,7 @@ def load_level(level_number, tile_size):
 
 
 
-    return platforms, level_width, level_height, player, enemy, enemy_spawn_xy
+    return platforms, level_width, level_height, player, enemy, enemy_spawn_xy, level
 
 def set_background(number):
     '''

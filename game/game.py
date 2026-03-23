@@ -2,11 +2,15 @@ import pygame
 
 pygame.init()
 
+from windows import dead_window
 from windows.quit_window import game_quit
 from levels.level_manager import load_level, set_background
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
+
+current_level = 0
+
 
 def main():
 
@@ -18,7 +22,8 @@ def main():
     изучить потом, чтобы сделать окно подстраивающимся под размеры экрана. вывести это в окно настройки?
     '''
 
-    screen_width, screen_height = 512*2, 288*2
+    screen_width, screen_height = 1024, 576
+    #screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
     screen = pygame.display.set_mode((screen_width, screen_height))
     
     tile_size = 16
@@ -27,10 +32,10 @@ def main():
 
 
     '''для отладки, удалить позже'''
-    platforms, level_width, level_height, player, enemy, enemy_spawn_xy = load_level(0, tile_size) 
+    platforms, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(0, tile_size) 
     background_color = set_background(0)
     camera.set_bounds(level_width, level_height)
-    enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'IDLE', player) #заспавнить врага и назначить следить за игроком
+    enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'CHASE', player, level) #заспавнить врага и назначить следить за игроком
 
 
     running = True
@@ -67,30 +72,37 @@ def main():
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
 
-        player.update(platforms, enemy)
+        player.update(screen, platforms, camera, enemy)
 
-        camera.update(player)
+        camera.update(player, screen)
 
         enemy.update(platforms)
 
         #---ОТРИСОВКА---
 
-        screen.fill(background_color)
+        if player.alive:
 
-        for platform in platforms:
+            screen.fill(background_color)
 
-            platform_rect_transformed = camera.apply(platform)
-            platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
-            screen.blit(platform_image_transformed, platform_rect_transformed)
+            for platform in platforms:
+
+                platform_rect_transformed = camera.apply(platform)
+                platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
+                screen.blit(platform_image_transformed, platform_rect_transformed)
         
-        player_rect_transformed = camera.apply(player)
-        player_image_transformed = pygame.transform.scale(player.image, (32, 32))
-        screen.blit(player_image_transformed, player_rect_transformed)
+            player_rect_transformed = camera.apply(player)
+            player_image_transformed = pygame.transform.scale(player.image, (32, 32))
+            screen.blit(player_image_transformed, player_rect_transformed)
 
-        enemy_rect_transformed = camera.apply(enemy)
-        enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
-        screen.blit(enemy_image_transformed, enemy_rect_transformed)
+            enemy_rect_transformed = camera.apply(enemy)
+            enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
+            screen.blit(enemy_image_transformed, enemy_rect_transformed)
         
+        if not player.alive:
+            print('triggered player not alive')
+            if dead_window.game_over(screen, screen_width, screen_height):
+                print('reset level')
+                #some function to reset current level
 
         pygame.display.flip()
     

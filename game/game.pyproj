@@ -28,6 +28,7 @@
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
     <Compile Include="levels\level_manager.py" />
+    <Compile Include="windows\dead_window.py" />
     <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>
