@@ -30,6 +30,8 @@
     <Compile Include="levels\level_manager.py" />
     <Compile Include="windows\dead_window.py" />
     <Compile Include="windows\dialogue_window.py" />
+    <Compile Include="windows\menu_window.py" />
+    <Compile Include="windows\pause_window.py" />
     <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>

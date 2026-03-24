@@ -75,8 +75,9 @@ class Enemy(pygame.sprite.Sprite):
     
     def update(self, platforms, camera):
 
-        if not self.alive:
+        if not self.alive or not self.target.alive:
             return
+
 
         # гравитация
         if not self.on_ground or self.on_ground:
@@ -190,6 +191,7 @@ class Enemy(pygame.sprite.Sprite):
         road_found_x = 0
         road_found_y = 0
 
+        
         for check_x in range(self_location_x, target_location_x, step):
             if level[check_y][check_x] == -1:
                 if level[check_y+1][check_x] == 0: #way is free with a floor
