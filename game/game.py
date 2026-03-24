@@ -4,7 +4,8 @@ pygame.init()
 
 from windows import dead_window
 from windows.quit_window import game_quit
-from levels.level_manager import load_level, set_background
+from levels.level_manager import load_level, set_background, level_update
+import levels.level_lib as level_lib
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
@@ -12,6 +13,8 @@ from classes.enemy import Enemy
 current_level = 0
 
 tile_size = 16
+
+trugger_next_level = False
 
 def change_level(number, screen, camera):
 
@@ -53,7 +56,6 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     
     
-
     camera = Camera(screen_width, screen_height)
 
 
@@ -139,6 +141,11 @@ def main():
 
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
+
+        trigger_next_level = level_update(current_level)
+        if trigger_next_level:
+            current_level += 1
+            background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
         for item in items:
             item.update(screen, camera, player, items)

@@ -8,6 +8,10 @@ from classes.items import Item
 
 placeholder_color = pygame.color.Color(255, 0, 255)
 
+#переменные уровней
+berries_count = 0
+trigger_next_level = False
+
 def load_level(level_number, tile_size):
     print('got level number ', level_number)
     
@@ -151,3 +155,14 @@ def set_background(number):
         color = pygame.color.Color(163, 70, 56)
 
     return color
+
+def level_update(number):
+
+    if number == 0:
+        if berries_count == 3:
+            trigger_next_level = True
+            return trigger_next_level
+
+def count_berries():
+    global berries_count
+    berries_count +=1

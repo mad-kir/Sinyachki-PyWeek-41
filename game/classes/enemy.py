@@ -119,8 +119,8 @@ class Enemy(pygame.sprite.Sprite):
         # дерево решений
 
         if self.state == 'IDLE':
-            if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*3):
-                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /2 ', camera.width/(camera.zoom*3), '| can see the player')
+            if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*2): #условие для начала погони
+                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /2 ', camera.width/(camera.zoom*2), '| can see the player')
                 
                 if self.detect_timer == None:
                     self.detect_timer = time.time()
@@ -143,7 +143,7 @@ class Enemy(pygame.sprite.Sprite):
             print('can pass = ', can_pass)
 
         if self.state == 'CHASE':
-            if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom*3):
+            if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
                 found, create_on_y = self.find_place_to_create(camera, platforms)
                 if found:
                     self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom)), self.target.rect.y, 'SEARCH', self.target, self.level)
