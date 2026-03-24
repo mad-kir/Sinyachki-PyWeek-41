@@ -50,9 +50,6 @@ class Camera:
             width = entity.width * self.zoom
             height = entity.height * self.zoom
 
-        
-        
-
         return pygame.Rect(x, y, width, height)
 
     def update(self, target, screen):
@@ -87,14 +84,39 @@ class Camera:
 
 
 
+    def render_scene(self, screen, background_color, platforms, items, player, enemy=None, enemy_spawn_xy=None):
+        screen.fill(background_color)
+
+        for platform in platforms:
+
+            platform_rect_transformed = self.apply(platform)
+            platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
+            screen.blit(platform_image_transformed, platform_rect_transformed)
+
+        for item in items:
+
+            item_rect_transformed = self.apply(item)
+            item_image_transformed = pygame.transform.scale(item.image, (32, 32))
+            screen.blit(item_image_transformed, item_rect_transformed)
+        
+        player_rect_transformed = self.apply(player)
+        player_image_transformed = pygame.transform.scale(player.image, (32, 32))
+        screen.blit(player_image_transformed, player_rect_transformed)
+
+        if enemy:
+            enemy_rect_transformed = self.apply(enemy)
+            enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
+            screen.blit(enemy_image_transformed, enemy_rect_transformed)
+
+
     #эффекты
 
-    def fade_out(self, screen):
+    def fade_out(self, screen, color=(0, 0, 0)):
         print('triggered fade out')
         self.fade_surface = pygame.Surface((self.width, self.height))
         self.fade_surface = self.fade_surface.convert()
-        self.fade_surface.fill((0, 0, 0))
-
+        self.fade_surface.fill(color)
+        
         start_time = time.time()
         duration = 5
 
@@ -107,4 +129,39 @@ class Camera:
             screen.blit(self.fade_surface, (0, 0))
             
             pygame.display.flip()
+
+    def fade_in(self, screen, color=(0, 0, 0), background_color=None, platforms=None, items=None, player=None):
+        print('triggered fade in')
+        self.fade_surface = pygame.Surface((self.width, self.height))
+        self.fade_surface = self.fade_surface.convert()
+        self.fade_surface.fill(color)
+
+        
+        if platforms:
+            print('got platforms, items, player = ', platforms, items, player)
+            self.render_scene(screen, background_color, platforms, items, player)
+        
+        duration = 1 #секунд
+        total_frames = int(duration * 60)
+
+        print('total frames ', total_frames)
+        for i in range(total_frames + 1):
+            print('i ', i)
+            alpha = min(255, 255 - int(i * 255 / total_frames))
+            print('255 - int(i * 255 / (duration*60)) = ', alpha)
+
+            if platforms:
+                self.render_scene(screen, background_color, platforms, items, player)
+
+            self.fade_surface.set_alpha(alpha)
+            screen.blit(self.fade_surface, (0, 0))
+            
+            pygame.display.flip()
+
+            time.sleep(1 / 60.0)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
         

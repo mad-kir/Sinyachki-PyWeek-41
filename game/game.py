@@ -5,7 +5,6 @@ pygame.init()
 from windows import dead_window
 from windows.quit_window import game_quit
 from levels.level_manager import load_level, set_background, level_update
-import levels.level_lib as level_lib
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
@@ -26,7 +25,7 @@ def change_level(number, screen, camera):
 
     background_color = set_background(number) #пока цвет, потом заменить на картинку
     
-    platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size) 
+    platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
     
     camera.set_bounds(level_width, level_height)
 
@@ -38,6 +37,8 @@ def change_level(number, screen, camera):
     
 
     return background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
+
+
 
 
 def main():
@@ -85,6 +86,9 @@ def main():
                 if event.key == pygame.K_TAB:
                     background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
+
+                if event.key == pygame.K_SPACE:
+                    camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
 
         
         keys = pygame.key.get_pressed()
@@ -141,12 +145,13 @@ def main():
 
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
+        
+        trigger_next_level = level_update(current_level, camera, screen)
 
-        trigger_next_level = level_update(current_level)
         if trigger_next_level:
             current_level += 1
             background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
-
+        
         for item in items:
             item.update(screen, camera, player, items)
 
@@ -157,6 +162,9 @@ def main():
         if enemy:
             enemy.update(platforms, camera)
         
+        if trigger_next_level:
+            camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
+
         pygame.display.flip()
     
     pygame.quit()
