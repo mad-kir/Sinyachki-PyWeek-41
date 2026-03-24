@@ -40,6 +40,7 @@ class Item(pygame.sprite.Sprite):
         self.can_pass = can_pass
 
     def update(self, screen, camera, player, items):
+
         if not self.alive:
             return
 
@@ -52,9 +53,11 @@ class Item(pygame.sprite.Sprite):
                             dialogue_window.show(screen, camera, player, 'I shouldn\’t walk in the forest — it\’s too easy to get lost there.')
 
                 if self.type == 'BUSH': 
+                    from levels.level_manager import count_berries
                     dialogue_window.show(screen, camera, self, 'Press ENTER')
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                            count_berries()
                             self.image = pygame.image.load('images/tileset_day/bush_5.png')
                             self.can_interact = False
                             """
