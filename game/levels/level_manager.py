@@ -12,7 +12,7 @@ placeholder_color = pygame.color.Color(255, 0, 255)
 berries_count = 0
 trigger_next_level = False
 
-def load_level(level_number, tile_size):
+def load_level(level_number, tile_size, camera, screen):
     print('got level number ', level_number)
     
     path = ''.join(('levels/', str(level_number), '.csv'))
@@ -141,7 +141,7 @@ def load_level(level_number, tile_size):
                 items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', can_interact=False))
 
 
-
+    #camera.fade_in(screen)
     return platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
 
 def set_background(number):
@@ -156,11 +156,14 @@ def set_background(number):
 
     return color
 
-def level_update(number):
+def level_update(number, camera, screen):
 
     if number == 0:
         if berries_count == 3:
             trigger_next_level = True
+            camera.fade_out(screen, (255, 255, 255))
+            camera.fade_out(screen, (255, 0, 0))
+            camera.fade_out(screen, (0, 0, 0))
             return trigger_next_level
 
 def count_berries():
