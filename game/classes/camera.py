@@ -127,6 +127,7 @@ class Camera:
             alpha = min(alpha_goal, 255)
             self.fade_surface.set_alpha(alpha)
             screen.blit(self.fade_surface, (0, 0))
+
             
             pygame.display.flip()
 

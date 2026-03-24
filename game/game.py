@@ -1,19 +1,29 @@
 import pygame
 
+import sys
+
 pygame.init()
 
 from windows import dead_window
+from windows import menu_window
 from windows.quit_window import game_quit
+from windows.pause_window import pause
 from levels.level_manager import load_level, set_background, level_update
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
+
+running = False
 
 current_level = 0
 
 tile_size = 16
 
 trugger_next_level = False
+
+screen_width, screen_height = 1024, 576
+#screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((screen_width, screen_height))
 
 def change_level(number, screen, camera):
 
@@ -43,6 +53,9 @@ def change_level(number, screen, camera):
 
 def main():
     global current_level
+    global runnning
+    global screen
+    global screen_width, screen_height
 
     fps = 60
     clock = pygame.time.Clock()
@@ -52,9 +65,6 @@ def main():
     изучить потом, чтобы сделать окно подстраивающимся под размеры экрана. вывести это в окно настройки?
     '''
 
-    screen_width, screen_height = 1024, 576
-    #screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-    screen = pygame.display.set_mode((screen_width, screen_height))
     
     
     camera = Camera(screen_width, screen_height)
@@ -77,27 +87,29 @@ def main():
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = game_quit()
+                running = game_quit(screen, screen_width, screen_height)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    running = game_quit()
+                    to_menu = pause(screen, screen_width, screen_height)
+                    if to_menu == True:
+                        print('to menu is ', to_menu)
+                        to_menu = False
+                        running = False
 
                 if event.key == pygame.K_TAB:
                     background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
 
-                if event.key == pygame.K_SPACE:
-                    camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
 
         
         keys = pygame.key.get_pressed()
 
-        jump_pressed = keys[pygame.K_SPACE] or keys[pygame.K_UP]
+        jump_pressed = keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]
         player.velocity_x = 0
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             player.velocity_x = -player.speed
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.velocity_x = player.speed
 
         if jump_pressed and not jumping:
@@ -139,6 +151,7 @@ def main():
         if not player.alive:
             print('triggered player not alive')
             should_reset = dead_window.game_over(screen, screen_width, screen_height) #enter не всегда срабатывает с первого раза
+
             if should_reset:
                 print('reset level')
                 background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
@@ -166,8 +179,15 @@ def main():
             camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
 
         pygame.display.flip()
-    
-    pygame.quit()
 
-if __name__ == '__main__':
-    main()
+
+while True:
+    game_start = menu_window.show(screen, screen_width, screen_height)
+    print('game start is ', game_start)
+    if game_start == True:
+        game_start = False
+        running = True
+        main()
+
+    if __name__ == '__main__':
+        menu_window.show(screen, screen_width, screen_height)

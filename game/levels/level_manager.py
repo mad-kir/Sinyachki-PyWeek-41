@@ -140,6 +140,17 @@ def load_level(level_number, tile_size, camera, screen):
                 #class item сложить в items
                 items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', can_interact=False))
 
+            
+
+
+            '''#загрузка маркеров
+            if level[row][col] == 6: #триггер действий, пока только чтобы убрать преграду на 1 уровне
+
+                image = pygame.Surface((tile_size, tile_size*6)) #16x96
+                image.fill(placeholder_color)
+                
+                player = Player(col*tile_size, row*tile_size, tile_size, tile_size, image)'''
+
 
     #camera.fade_in(screen)
     return platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
