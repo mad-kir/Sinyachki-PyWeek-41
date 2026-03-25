@@ -5,6 +5,7 @@ from classes.platforms import Platform
 from classes.player import Player
 from classes.enemy import Enemy
 from classes.items import Item
+from classes.markers import Marker
 
 placeholder_color = pygame.color.Color(255, 0, 255)
 
@@ -27,6 +28,7 @@ def load_level(level_number, tile_size, camera, screen):
     platforms = pygame.sprite.Group()
 
     items = []
+    markers = []
 
     enemy = None
     enemy_spawn_xy = None
@@ -88,6 +90,22 @@ def load_level(level_number, tile_size, camera, screen):
                 enemy_spawn_xy = [col*tile_size, row*tile_size]
                 print('try enemy spawn on ', enemy_spawn_xy)
             
+            #загрузка маркеров
+            if level[row][col] == 6: #триггер действий, пока только чтобы убрать преграду на 1 уровне
+
+                image = pygame.Surface((tile_size, tile_size*6)) #16x96
+                image.fill(placeholder_color)
+                
+                markers.append(Marker(col*tile_size, row*tile_size, tile_size, tile_size*6, image, 'TRIGGER'))
+
+            if level[row][col] == 7: #триггер перехода на следующий уровень
+
+                image = pygame.Surface((tile_size, tile_size*6)) #16x96
+                image.fill(placeholder_color)
+                
+                markers.append(Marker(col*tile_size, row*tile_size, tile_size, tile_size*6, image, 'NEXTLEVEL'))
+
+
             #загрузка интерактивных предметов
             if level[row][col] == 3: #forest
 
@@ -100,11 +118,10 @@ def load_level(level_number, tile_size, camera, screen):
 
                 except:
                     print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
-                    image = pygame.Surface((tile_size, tile_size))
+                    image = pygame.Surface((tile_size*10, tile_size*10))
                     image.fill(placeholder_color)
                 
-                #class item сложить в items
-                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'FOREST', can_interact=True, can_pass=False))
+                items.append(Item(col * tile_size, row * tile_size - (tile_size*10 - tile_size), tile_size*10, tile_size*10, image, 'FOREST', level_number, markers, can_interact=True, can_pass=False))
 
             if level[row][col] == 4: #bush interactable
 
@@ -119,9 +136,7 @@ def load_level(level_number, tile_size, camera, screen):
                     print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
                     image = pygame.Surface((tile_size, tile_size))
                     image.fill(placeholder_color)
-                
-                #class item сложить в items
-                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', can_interact=True))
+                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', level_number, markers, can_interact=True))
 
             if level[row][col] == 5: #bush not interactable
 
@@ -137,12 +152,16 @@ def load_level(level_number, tile_size, camera, screen):
                     image = pygame.Surface((tile_size, tile_size))
                     image.fill(placeholder_color)
                 
-                #class item сложить в items
-                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', can_interact=False))
+                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', level_number, markers, can_interact=False))
+
+            
+
+
+            
 
 
     #camera.fade_in(screen)
-    return platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
+    return platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
 
 def set_background(number):
     '''
@@ -156,7 +175,7 @@ def set_background(number):
 
     return color
 
-def level_update(number, camera, screen):
+def level_update(number, camera, screen, markers): ######## СЮДА ДОБАВИТЬ ЗВУКИ ПЕРЕХОДА НА СЛЕДУЮЩИЙ УРОВЕНЬ
 
     if number == 0:
         if berries_count == 3:
@@ -165,6 +184,14 @@ def level_update(number, camera, screen):
             camera.fade_out(screen, (255, 0, 0))
             camera.fade_out(screen, (0, 0, 0))
             return trigger_next_level
+
+    elif number == 1:
+        for marker in markers:
+            if marker.type == 'NEXTLEVEL':
+                if marker.is_triggered:
+                    trigger_next_level = True
+                    camera.fade_out(screen, (0, 0, 0))
+                    return trigger_next_level
 
 def count_berries():
     global berries_count

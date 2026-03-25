@@ -1,19 +1,30 @@
 import pygame
 
+import sys
+
 pygame.init()
 
 from windows import dead_window
+from windows import menu_window
 from windows.quit_window import game_quit
+from windows.pause_window import pause
 from levels.level_manager import load_level, set_background, level_update
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
+from classes.markers import Marker
+
+running = False
 
 current_level = 0
 
 tile_size = 16
 
 trugger_next_level = False
+
+screen_width, screen_height = 1024, 576
+#screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((screen_width, screen_height))
 
 def change_level(number, screen, camera):
 
@@ -25,7 +36,7 @@ def change_level(number, screen, camera):
 
     background_color = set_background(number) #пока цвет, потом заменить на картинку
     
-    platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
+    platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
     
     camera.set_bounds(level_width, level_height)
 
@@ -36,13 +47,16 @@ def change_level(number, screen, camera):
 
     
 
-    return background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
+    return background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
 
 
 
 
 def main():
     global current_level
+    global runnning
+    global screen
+    global screen_width, screen_height
 
     fps = 60
     clock = pygame.time.Clock()
@@ -52,9 +66,6 @@ def main():
     изучить потом, чтобы сделать окно подстраивающимся под размеры экрана. вывести это в окно настройки?
     '''
 
-    screen_width, screen_height = 1024, 576
-    #screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-    screen = pygame.display.set_mode((screen_width, screen_height))
     
     
     camera = Camera(screen_width, screen_height)
@@ -66,7 +77,7 @@ def main():
     #camera.set_bounds(level_width, level_height)
     #enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'CHASE', player, level) #заспавнить врага и назначить следить за игроком
 
-    background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+    background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
     running = True
 
@@ -77,37 +88,50 @@ def main():
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = game_quit()
+                running = game_quit(screen, screen_width, screen_height)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    running = game_quit()
+                    to_menu = pause(screen, screen_width, screen_height)
+                    if to_menu == True:
+                        #print('to menu is ', to_menu)
+                        to_menu = False
+                        running = False
 
                 if event.key == pygame.K_TAB:
-                    background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
+                    background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
 
-                if event.key == pygame.K_SPACE:
-                    camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
+            if event.type == pygame.KEYUP:
+                if event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
+                    player.jump_stop()
+                if event.key in (pygame.K_RIGHT, pygame.K_d):
+                    player.animation_player(1)
+                if event.key in (pygame.K_LEFT, pygame.K_a):
+                    player.animation_player(0)
+
 
         
         keys = pygame.key.get_pressed()
 
-        jump_pressed = keys[pygame.K_SPACE] or keys[pygame.K_UP]
+        jump_pressed = keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]
         player.velocity_x = 0
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             player.velocity_x = -player.speed
-        if keys[pygame.K_RIGHT]:
+            player.animation_player(0, 'run')
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.velocity_x = player.speed
+            player.animation_player(1, 'run')
 
-        if jump_pressed and not jumping:
+        if jump_pressed:
             player.jump()
+
+        
+
         
         
         jumping = jump_pressed
 
-
-        
 
         #---ОТРИСОВКА---
 
@@ -117,40 +141,43 @@ def main():
 
             for platform in platforms:
 
-                platform_rect_transformed = camera.apply(platform)
-                platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
+                platform_rect_transformed, platform_image_transformed = camera.apply(platform)
                 screen.blit(platform_image_transformed, platform_rect_transformed)
 
-            for item in items:
+            for marker in markers:
+                marker_rect_transformed, marker_image_transformed = camera.apply(marker)
+                screen.blit(marker_image_transformed, marker_rect_transformed)
 
-                item_rect_transformed = camera.apply(item)
-                item_image_transformed = pygame.transform.scale(item.image, (32, 32))
-                screen.blit(item_image_transformed, item_rect_transformed)
+            for item in items:
+                item_rect_transformed, item_image_transformed = camera.apply(item)
+                if item.alive:
+                    screen.blit(item_image_transformed, item_rect_transformed)
         
-            player_rect_transformed = camera.apply(player)
-            player_image_transformed = pygame.transform.scale(player.image, (32, 32))
+            player_rect_transformed, player_image_transformed = camera.apply(player)
             screen.blit(player_image_transformed, player_rect_transformed)
 
             if enemy:
-                enemy_rect_transformed = camera.apply(enemy)
-                enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
+                enemy_rect_transformed, enemy_image_transformed = camera.apply(enemy)
                 screen.blit(enemy_image_transformed, enemy_rect_transformed)
         
         if not player.alive:
-            print('triggered player not alive')
             should_reset = dead_window.game_over(screen, screen_width, screen_height) #enter не всегда срабатывает с первого раза
+
             if should_reset:
-                print('reset level')
-                background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+                background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
         
-        trigger_next_level = level_update(current_level, camera, screen)
+        for marker in markers:
+            marker.update(screen, player, items, current_level)
+
+
+        trigger_next_level = level_update(current_level, camera, screen, markers)
 
         if trigger_next_level:
             current_level += 1
-            background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+            background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
         
         for item in items:
             item.update(screen, camera, player, items)
@@ -160,14 +187,20 @@ def main():
         camera.update(player, screen)
 
         if enemy:
-            enemy.update(platforms, camera)
+            enemy.update(platforms, markers, camera, player)
         
         if trigger_next_level:
             camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)
 
         pygame.display.flip()
-    
-    pygame.quit()
 
-if __name__ == '__main__':
-    main()
+
+while True:
+    game_start = menu_window.show(screen, screen_width, screen_height)
+    if game_start == True:
+        game_start = False
+        running = True
+        main()
+
+    if __name__ == '__main__':
+        menu_window.show(screen, screen_width, screen_height)

@@ -21,27 +21,50 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="animation_manager.py" />
     <Compile Include="classes\camera.py" />
     <Compile Include="classes\enemy.py" />
     <Compile Include="classes\items.py" />
+    <Compile Include="classes\markers.py" />
     <Compile Include="classes\platforms.py" />
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
     <Compile Include="levels\level_manager.py" />
     <Compile Include="windows\dead_window.py" />
     <Compile Include="windows\dialogue_window.py" />
+    <Compile Include="windows\menu_window.py" />
+    <Compile Include="windows\pause_window.py" />
     <Compile Include="windows\quit_window.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="fonts\" />
     <Folder Include="images\" />
     <Folder Include="classes\" />
+    <Folder Include="images\main_character\" />
     <Folder Include="levels\" />
     <Folder Include="windows\" />
     <Folder Include="sounds\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\RoyaltyMono.ttf" />
+    <Content Include="images\main_character\player_0.png" />
+    <Content Include="images\main_character\player_1.png" />
+    <Content Include="images\main_character\player_2.png" />
+    <Content Include="images\main_character\player_3.png" />
+    <Content Include="images\main_character\player_4.png" />
+    <Content Include="images\main_character\player_5.png" />
+    <Content Include="images\main_character\player_6.png" />
+    <Content Include="images\main_character\player_7.png" />
+    <Content Include="images\main_character\player_animations.pxo" />
+    <Content Include="images\main_character\player_left_10.png" />
+    <Content Include="images\main_character\player_left_11.png" />
+    <Content Include="images\main_character\player_left_12.png" />
+    <Content Include="images\main_character\player_left_13.png" />
+    <Content Include="images\main_character\player_left_14.png" />
+    <Content Include="images\main_character\player_left_15.png" />
+    <Content Include="images\main_character\player_left_8.png" />
+    <Content Include="images\main_character\player_left_9.png" />
+    <Content Include="images\main_character\Selection_1.png" />
     <Content Include="images\здесь сохранять спрайты" />
     <Content Include="levels\0.csv" />
     <Content Include="sounds\здесь сохранять звуковые эффекты и саундтрек" />
