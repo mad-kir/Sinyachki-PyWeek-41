@@ -105,10 +105,7 @@ def main():
             if event.type == pygame.KEYUP:
                 if event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
                     player.jump_stop()
-                if event.key in (pygame.K_RIGHT, pygame.K_d):
-                    player.animation_player(1)
-                if event.key in (pygame.K_LEFT, pygame.K_a):
-                    player.animation_player(0)
+                
 
 
         
@@ -118,10 +115,12 @@ def main():
         player.velocity_x = 0
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             player.velocity_x = -player.speed
-            player.animation_player(0, 'run')
+            player.direction = 0
+            #player.animation_player(0, 'run')
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.velocity_x = player.speed
-            player.animation_player(1, 'run')
+            player.direction = 1
+            #player.animation_player(1, 'run')
 
         if jump_pressed:
             player.jump()

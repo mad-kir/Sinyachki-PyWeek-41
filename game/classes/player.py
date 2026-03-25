@@ -24,12 +24,12 @@ class Player(pygame.sprite.Sprite):
         self.velocity_x = 0
         self.velocity_y = 0
         
-        self.speed = 6
+        self.speed = 5
 
         self.on_ground = False
         self.jumping = True
         self.jumps_remaining = 2
-        self.gravity = 0.7
+        self.gravity = 0.6
         self.jump_power = -5
         self.jump_count_max = 10
         self.jump_count = 0
@@ -41,18 +41,56 @@ class Player(pygame.sprite.Sprite):
         self.animation = set_animation('player_right_idle')
         self.anim = 'idle'
         self.frame = 0
-        self.play_speed = 10 #каждые n кадров меняется фрейм анимации
+        self.play_speed = 5 #каждые n кадров меняется фрейм анимации
         self.wait_play = 0
 
         self.direction = 1
 
     def update(self,screen, platforms, items, camera, enemy):
 
+        #проверка состояний для смены анимации
+        
+        if self.on_ground:
+
+            if self.velocity_x != 0: #бег
+                self.anim = 'run'
+                if self.direction == 1:
+                    self.animation = set_animation('player_right_' + self.anim)
+                    print('self animation ', self.animation)
+
+                elif self.direction == 0:
+                    self.animation = set_animation('player_left_' + self.anim)
+                    print('self animation ', self.animation)
+
+
+        
+            elif self.velocity_x == 0: #покой
+                if self.direction == 1:
+                    self.anim = 'idle'
+                    self.animation = set_animation('player_right_idle')
+                else:
+                    self.anim = 'idle'
+                    self.animation = set_animation('player_left_idle')
+
+                self.frame = 0
+                self.wait_play = 0
+
+        elif not self.on_ground: #прыжок/падение
+            if self.direction == 1:
+                self.anim = 'jump'
+                self.animation = set_animation('player_right_jump')
+            else:
+                self.anim = 'jump'
+                self.animation = set_animation('player_left_jump')
+
+            self.frame = 0
+            self.wait_play = 0
+
+
         #смена кадров текущей анимации
         self.image = pygame.image.load(self.animation[self.frame])
         #print('current frame', self.frame)
         if self.frame < len(self.animation)-1:
-            print('wait play ', self.wait_play)
             if self.wait_play >= self.play_speed:
                 self.frame +=1
                 self.wait_play = 0
@@ -193,20 +231,17 @@ class Player(pygame.sprite.Sprite):
 
 
 
-    def animation_player(self, direction=1, anim='idle'):
-        
+    """def animation_player(self, direction=1, anim='idle'):
+
         if direction == self.direction:
             if anim == self.anim:
                 return
-        
         else:
             if direction == 1:
-                print('PLAYER WATCHING RIGHT')
-                animation = set_animation('player_right_' + anim)
+                self.animation = set_animation('player_right_' + anim)
 
             elif direction == 0:
-                print('PLAYER WATCHING LEFT')
-                animation = set_animation('player_left_' + anim)
+                self.animation = set_animation('player_left_' + anim)
 
-        self.animation = animation
-        self.direction = direction
+        
+        self.direction = direction"""

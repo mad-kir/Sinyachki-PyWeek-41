@@ -75,20 +75,16 @@ def load_level(level_number, tile_size, camera, screen):
             if level[row][col] == 2:
 
                 try:
-                    if level_number == 0:
-                        image = pygame.image.load(''.join(('images/tileset_day/enemy_', str(level[row][col]), '.png')))
-
-                    else:
-                        image = pygame.image.load(''.join(('images/tileset_night/enemy_', str(level[row][col]), '.png')))
+                    image = pygame.image.load('images/animations/enemy_0.png')
 
                 except:
                     print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
-                    image = pygame.Surface((tile_size, tile_size))
+                    image = pygame.Surface((tile_size*2, tile_size*2))
                     image.fill(placeholder_color)
                 
-                enemy = Enemy(tile_size, tile_size, image)
+                enemy = Enemy(tile_size*2, tile_size*2, image)
                 enemy_spawn_xy = [col*tile_size, row*tile_size]
-                print('try enemy spawn on ', enemy_spawn_xy)
+                #print('try enemy spawn on ', enemy_spawn_xy)
             
             #загрузка маркеров
             if level[row][col] == 6: #триггер действий, пока только чтобы убрать преграду на 1 уровне
