@@ -102,6 +102,10 @@ def main():
                     background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
 
+            if event.type == pygame.KEYUP:
+                if event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
+                    player.jump_stop()
+
 
         
         keys = pygame.key.get_pressed()
@@ -113,14 +117,16 @@ def main():
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.velocity_x = player.speed
 
-        if jump_pressed and not jumping:
+        if jump_pressed:
+            print('jump_pressed')
             player.jump()
+
+        
+
         
         
         jumping = jump_pressed
 
-
-        
 
         #---ОТРИСОВКА---
 

@@ -26,14 +26,25 @@ class Player(pygame.sprite.Sprite):
         self.speed = 6
 
         self.on_ground = False
+        self.jumping = True
         self.jumps_remaining = 2
-        self.gravity = 0.5
-        self.jump_power = -7
-        self.max_fall_speed = 15
+        self.gravity = 0.7
+        self.jump_power = -5
+        self.jump_count_max = 10
+        self.jump_count = 0
+
+        self.max_fall_speed = 20
 
         self.alive = True
 
     def update(self,screen, platforms, items, camera, enemy):
+
+        if self.jumping and self.jump_count < self.jump_count_max:
+            self.jump_count += 1
+            self.velocity_y = self.jump_power + (self.jump_count / self.jump_count_max)
+        else:
+            if not self.jumping:
+                self.jump_count = 0
         
         #гравитация
         #print('on ground is ', self.on_ground)
@@ -83,8 +94,9 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = platform.rect.top
                     self.velocity_y = 0
                     self.on_ground = True
+                    self.jumping = False
                     self.jumps_remaining = 2
-                    #print('jumps remaining 2, on ground True')
+                    self.jump_count = 0
                 
                 elif self.velocity_y < 0:
                     self.rect.top = platform.rect.bottom
@@ -99,6 +111,7 @@ class Player(pygame.sprite.Sprite):
                     self.velocity_y = 0
                     self.on_ground = True
                     self.jumps_remaining = 2
+                    self.jump_count = 0
                 
                 elif self.velocity_y < 0:
                     self.rect.top = item.rect.bottom
@@ -119,18 +132,31 @@ class Player(pygame.sprite.Sprite):
             
 
     def jump(self):
-        #print('jump is triggered. at start, jumps remaining ', self.jumps_remaining, ' and on ground is ', self.on_ground)
         if self.jumps_remaining == 2 and self.on_ground:
+                
             self.velocity_y = self.jump_power
+            
             self.jumps_remaining -= 1
+
+            self.jumping = True
             self.on_ground = False
-            #print('after, jumps remaining ', self.jumps_remaining, ' and on ground is ', self.on_ground)
+
             return True
-        elif self.jumps_remaining == 1 and not self.on_ground:
+        elif self.jumps_remaining == 1 and not self.jumping and not self.on_ground: #если не осталось джамп каунт, то не прыгает повторно ИСПРАВИТЬ
+            
             self.velocity_y = self.jump_power
+
             self.jumps_remaining -= 1
+
+            self.jumping = True
             return True
+            
         return False
+
+    def jump_stop(self):
+        if self.jumping:
+            self.jumping = False
+
 
     """
     СЮДА ДОБАВИТЬ ЗВУКИ ПРЫЖКОВ
