@@ -6,6 +6,8 @@ import time
 
 import pygame.surface
 
+from animation_manager import set_animation
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, width, height, image):
         super().__init__()
@@ -44,6 +46,14 @@ class Enemy(pygame.sprite.Sprite):
 
         level = np.array([])
 
+        self.animation = set_animation('enemy_right_idle')
+        self.anim = 'idle'
+        self.frame = 0
+        self.play_speed = 5 #каждые n кадров меняется фрейм анимации
+        self.wait_play = 0
+
+        self.direction = 1
+
     def destroy_enemy(self):
         self.alive = False
         self.rect = pygame.Rect(0, 0, 0, 0)
@@ -67,8 +77,10 @@ class Enemy(pygame.sprite.Sprite):
     def move_x(self, direction):
         if direction == -1:
             self.velocity_x = -self.speed
+            self.direction = 0
         elif direction == 1:
             self.velocity_x = self.speed
+            self.direction = 1
 
     def jump(self):
         if self.on_ground:
@@ -79,6 +91,61 @@ class Enemy(pygame.sprite.Sprite):
 
         if not self.alive or not self.target.alive:
             return
+
+
+        #проверка состояний для смены анимации
+        
+        if self.on_ground:
+
+            if self.velocity_x != 0: #бег
+                self.anim = 'run'
+                if self.direction == 1:
+                    self.animation = set_animation('enemy_right_' + self.anim)
+                    print('self animation ', self.animation)
+
+                elif self.direction == 0:
+                    self.animation = set_animation('enemy_left_' + self.anim)
+                    print('self animation ', self.animation)
+
+        
+            elif self.velocity_x == 0: #покой
+                if self.direction == 1:
+                    self.anim = 'idle'
+                    self.animation = set_animation('enemy_right_idle')
+                else:
+                    self.anim = 'idle'
+                    self.animation = set_animation('enemy_left_idle')
+
+                self.frame = 0
+                self.wait_play = 0
+
+        elif not self.on_ground: #прыжок/падение
+            if self.direction == 1:
+                self.anim = 'jump'
+                self.animation = set_animation('enemy_right_jump')
+            else:
+                self.anim = 'jump'
+                self.animation = set_animation('enemy_left_jump')
+
+            self.frame = 0
+            self.wait_play = 0
+
+
+        #смена кадров текущей анимации
+        self.image = pygame.image.load(self.animation[self.frame])
+        #print('current frame', self.frame)
+        if self.frame < len(self.animation)-1:
+            if self.wait_play >= self.play_speed:
+                self.frame +=1
+                self.wait_play = 0
+            else:
+                self.wait_play += 1
+        else:
+            if self.wait_play >= self.play_speed:
+                self.frame = 0
+                self.wait_play = 0
+            else:
+                self.wait_play += 1
 
 
         # гравитация
