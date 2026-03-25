@@ -40,6 +40,8 @@ class Enemy(pygame.sprite.Sprite):
         self.detect_timer = None
         self.detect_delay = 1
 
+        self.cannot_reach_count = 0
+
         level = np.array([])
 
     def destroy_enemy(self):
@@ -73,11 +75,12 @@ class Enemy(pygame.sprite.Sprite):
             self.velocity_y = self.jump_power
             self.on_ground = False
     
-    def update(self, platforms, camera):
+    def update(self, platforms, markers, camera, player):
 
         if not self.alive or not self.target.alive:
             return
 
+        print('enemy: ', self.rect.x, self.rect.y)
 
         # гравитация
         if not self.on_ground or self.on_ground:
@@ -118,10 +121,16 @@ class Enemy(pygame.sprite.Sprite):
                     self.on_ground = False
 
         # дерево решений
+        
+        if self.cannot_reach_count >= 1000:
+            self.cannot_reach_count = 0
+            self.target = player
+            self.destroy_enemy()
+            self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, self.state, self.target, self.level)
 
         if self.state == 'IDLE':
             if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*2): #условие для начала погони
-                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /2 ', camera.width/(camera.zoom*2), '| can see the player')
+                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /zoom*2 ', camera.width/(camera.zoom*2), '| can see the player')
                 
                 if self.detect_timer == None:
                     self.detect_timer = time.time()
@@ -140,14 +149,16 @@ class Enemy(pygame.sprite.Sprite):
             self_location_x = int(self.rect.x / 16)
             self_location_y = int(self.rect.y / 16)
 
-            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y)
+            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
             print('can pass = ', can_pass)
 
         if self.state == 'CHASE':
             if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
+                print('trigger despawn')
                 found, create_on_y = self.find_place_to_create(camera, platforms)
                 if found:
-                    self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom)), self.target.rect.y, 'SEARCH', self.target, self.level)
+                    print('found place, spawning enemy')
+                    self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
                 else:
                     print('COULD NOT FIND A SPACE TO CREATE THE ENEMY')
 
@@ -157,7 +168,7 @@ class Enemy(pygame.sprite.Sprite):
             self_location_x = int(self.rect.x / 16)
             self_location_y = int(self.rect.y / 16)
 
-            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y)
+            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
             print('can pass = ', can_pass)
 
             
@@ -171,8 +182,8 @@ class Enemy(pygame.sprite.Sprite):
         return False, 0
         
 
-    def check_platforms(self, self_location_x, self_location_y, target_location_x, target_location_y):
-        print('checking for platforms..')
+    def check_platforms(self, self_location_x, self_location_y, target_location_x, target_location_y, markers):
+        #print('checking for platforms..')
 
         level = self.level
 
@@ -207,9 +218,12 @@ class Enemy(pygame.sprite.Sprite):
                     self.jump()
                     self.move_x(step)
                 else:
-                    print('cannot reach')
+                    self.cannot_reach_count += 1
+                    #print('cannot reach ', self.cannot_reach_count)
                     #set target (create some sort of target in the oposite direction)
-                    return False
+                    if self.cannot_reach_count == 1000:
+                        print('cannot reach count 1000')
+                        return False
 
 
 

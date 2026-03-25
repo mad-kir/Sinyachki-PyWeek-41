@@ -5,39 +5,26 @@ from windows.dialogue_window import DialogueWindow
 dialogue_window = DialogueWindow()
 
 class Item(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height, image, type, can_interact=False, can_pass=True):
+    def __init__(self, x, y, width, height, image, type, level, markers, can_interact=False, can_pass=True):
         super().__init__()
-        
+
         self.x = x
         self.y = y
-
         self.width, self.height = width, height
 
-        self.image_surface = pygame.Surface((width, height))
+        
 
+        self.image_surface = pygame.Surface((self.width, self.height))
         self.image = image
+        #self.image_surf.fill((255, 0, 0))
+        self.rect = pygame.Rect(x, y, self.width, self.height)
 
-        self.rect = self.image_surface.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
-        self.interact_rect = pygame.Rect(self.rect.x-5, self.rect.y-5, self.rect.width+10, self.rect.height+10)
-        
-        #self.velocity_x = 0 (probably won't move but I'll keep it anyway just in case)
-        #self.velocity_y = 0
-        
-        #self.speed = 6
-
-        #self.on_ground = False
-        #self.jumps_remaining = 2
-        #self.gravity = 0.5
-        #self.jump_power = -7
-        #self.max_fall_speed = 15
+        self.interact_rect = pygame.Rect(self.rect.x - 5, self.rect.y - 5, self.rect.width + 10, self.rect.height + 10)
 
         self.alive = True
-
         self.type = type
-
+        self.level = level
+        self.markers = markers
         self.can_interact = can_interact
         self.can_pass = can_pass
 
@@ -46,10 +33,21 @@ class Item(pygame.sprite.Sprite):
         if not self.alive:
             return
 
+        #обработка маркеров
+        if self.type == 'FOREST':
+            if self.level == 1:
+                for marker in self.markers:
+                    if marker.is_triggered and marker.type == 'TRIGGER':
+                        self.image_surface.set_alpha(255)
+                        self.can_pass = True
+                        self.can_interact = False
+                        self.alive = False
+
+        #обработка столкновений
         if self.interact_rect.colliderect(player.rect):
             if self.can_interact:
                 if self.type == 'FOREST':
-
+                    
                     dw_surf, dw_rect = dialogue_window.show(screen, camera, self, 'Press ENTER')
                     dw_rect_transformed = camera.apply(dw_rect)
                     screen.blit(dw_surf, dw_rect_transformed)

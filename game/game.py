@@ -12,6 +12,7 @@ from levels.level_manager import load_level, set_background, level_update
 from classes.player import Player
 from classes.camera import Camera
 from classes.enemy import Enemy
+from classes.markers import Marker
 
 running = False
 
@@ -35,7 +36,7 @@ def change_level(number, screen, camera):
 
     background_color = set_background(number) #пока цвет, потом заменить на картинку
     
-    platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
+    platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
     
     camera.set_bounds(level_width, level_height)
 
@@ -46,7 +47,7 @@ def change_level(number, screen, camera):
 
     
 
-    return background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
+    return background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level
 
 
 
@@ -76,7 +77,7 @@ def main():
     #camera.set_bounds(level_width, level_height)
     #enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'CHASE', player, level) #заспавнить врага и назначить следить за игроком
 
-    background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+    background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
     running = True
 
@@ -98,7 +99,7 @@ def main():
                         running = False
 
                 if event.key == pygame.K_TAB:
-                    background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
+                    background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
 
 
@@ -133,11 +134,16 @@ def main():
                 platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
                 screen.blit(platform_image_transformed, platform_rect_transformed)
 
-            for item in items:
+            for marker in markers:
+                marker_rect_transformed = camera.apply(marker)
+                marker_image_transformed = pygame.transform.scale(marker.image, (32, 32))
+                screen.blit(marker_image_transformed, marker_rect_transformed)
 
+            for item in items:
                 item_rect_transformed = camera.apply(item)
                 item_image_transformed = pygame.transform.scale(item.image, (32, 32))
-                screen.blit(item_image_transformed, item_rect_transformed)
+                if item.alive:
+                    screen.blit(item_image_transformed, item_rect_transformed)
         
             player_rect_transformed = camera.apply(player)
             player_image_transformed = pygame.transform.scale(player.image, (32, 32))
@@ -154,16 +160,20 @@ def main():
 
             if should_reset:
                 print('reset level')
-                background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+                background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
         
-        trigger_next_level = level_update(current_level, camera, screen)
+        for marker in markers:
+            marker.update(screen, player, items, current_level)
+
+
+        trigger_next_level = level_update(current_level, camera, screen, markers)
 
         if trigger_next_level:
             current_level += 1
-            background_color, platforms, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+            background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
         
         for item in items:
             item.update(screen, camera, player, items)
@@ -173,7 +183,7 @@ def main():
         camera.update(player, screen)
 
         if enemy:
-            enemy.update(platforms, camera)
+            enemy.update(platforms, markers, camera, player)
         
         if trigger_next_level:
             camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)

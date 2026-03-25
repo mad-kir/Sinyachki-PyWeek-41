@@ -24,6 +24,7 @@
     <Compile Include="classes\camera.py" />
     <Compile Include="classes\enemy.py" />
     <Compile Include="classes\items.py" />
+    <Compile Include="classes\markers.py" />
     <Compile Include="classes\platforms.py" />
     <Compile Include="classes\player.py" />
     <Compile Include="game.py" />
