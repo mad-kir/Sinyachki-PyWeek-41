@@ -9,7 +9,7 @@ import pygame.surface
 from animation_manager import set_animation
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, width, height, image):
+    def __init__(self, width, height, image, type):
         super().__init__()
         
         self.x = 0
@@ -35,6 +35,8 @@ class Enemy(pygame.sprite.Sprite):
         self.max_fall_speed = 10
 
         self.alive = False
+
+        self.type = type
 
         self.target = None
         self.state = 'IDLE'
@@ -64,6 +66,10 @@ class Enemy(pygame.sprite.Sprite):
         self.state = state
         self.target = target
 
+        if self.type == 'WOLF':
+            self.speed = 5
+            self.jump_power = -4
+
         self.rect = self.image_surface.get_rect()
         self.x, self.y = x, y
         self.rect.x, self.rect.y = x, y
@@ -88,47 +94,83 @@ class Enemy(pygame.sprite.Sprite):
             self.on_ground = False
     
     def update(self, platforms, markers, camera, player):
-
+        print(self.type, self.rect.x)
         if not self.alive or not self.target.alive:
             return
 
+        if self.type == 'THORNS':
+            if self.rect.colliderect(self.target.rect):
+                self.target.alive = False
+            return
 
         #проверка состояний для смены анимации
-        
-        if self.on_ground:
+        if self.type == 'VAMPIRE':
+            if self.on_ground:
+            
+                if self.velocity_x != 0: #бег
+                    self.anim = 'run'
+                    if self.direction == 1:
+                        self.animation = set_animation('enemy_right_' + self.anim)
 
-            if self.velocity_x != 0: #бег
-                self.anim = 'run'
-                if self.direction == 1:
-                    self.animation = set_animation('enemy_right_' + self.anim)
-                    print('self animation ', self.animation)
-
-                elif self.direction == 0:
-                    self.animation = set_animation('enemy_left_' + self.anim)
-                    print('self animation ', self.animation)
+                    elif self.direction == 0:
+                        self.animation = set_animation('enemy_left_' + self.anim)
 
         
-            elif self.velocity_x == 0: #покой
+                elif self.velocity_x == 0: #покой
+                    if self.direction == 1:
+                        self.anim = 'idle'
+                        self.animation = set_animation('enemy_right_idle')
+                    else:
+                        self.anim = 'idle'
+                        self.animation = set_animation('enemy_left_idle')
+
+                    self.frame = 0
+                    self.wait_play = 0
+
+            elif not self.on_ground: #прыжок/падение
                 if self.direction == 1:
-                    self.anim = 'idle'
-                    self.animation = set_animation('enemy_right_idle')
+                    self.anim = 'jump'
+                    self.animation = set_animation('enemy_right_jump')
                 else:
-                    self.anim = 'idle'
-                    self.animation = set_animation('enemy_left_idle')
+                    self.anim = 'jump'
+                    self.animation = set_animation('enemy_left_jump')
 
                 self.frame = 0
                 self.wait_play = 0
 
-        elif not self.on_ground: #прыжок/падение
-            if self.direction == 1:
-                self.anim = 'jump'
-                self.animation = set_animation('enemy_right_jump')
-            else:
-                self.anim = 'jump'
-                self.animation = set_animation('enemy_left_jump')
+        if self.type == 'WOLF':
+            if self.on_ground:
+            
+                if self.velocity_x != 0: #бег
+                    self.anim = 'run'
+                    if self.direction == 1:
+                        self.animation = set_animation('wolf_right_' + self.anim)
 
-            self.frame = 0
-            self.wait_play = 0
+                    elif self.direction == 0:
+                        self.animation = set_animation('wolf_left_' + self.anim)
+
+        
+                elif self.velocity_x == 0: #покой
+                    if self.direction == 1:
+                        self.anim = 'idle'
+                        self.animation = set_animation('wolf_right_idle')
+                    else:
+                        self.anim = 'idle'
+                        self.animation = set_animation('wolf_left_idle')
+
+                    self.frame = 0
+                    self.wait_play = 0
+
+            elif not self.on_ground: #прыжок/падение
+                if self.direction == 1:
+                    self.anim = 'jump'
+                    self.animation = set_animation('wolf_right_jump')
+                else:
+                    self.anim = 'jump'
+                    self.animation = set_animation('wolf_left_jump')
+
+                self.frame = 0
+                self.wait_play = 0
 
 
         #смена кадров текущей анимации
@@ -187,56 +229,67 @@ class Enemy(pygame.sprite.Sprite):
                     self.on_ground = False
 
         # дерево решений
-        
-        if self.cannot_reach_count >= 1000:
-            self.cannot_reach_count = 0
-            self.target = player
-            self.destroy_enemy()
-            self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, self.state, self.target, self.level)
+        if self.type == 'VAMPIRE':
+            if self.cannot_reach_count >= 1000:
+                self.cannot_reach_count = 0
+                self.target = player
+                self.destroy_enemy()
+                self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, self.state, self.target, self.level)
 
-        if self.state == 'IDLE':
-            if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*2): #условие для начала погони
-                print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /zoom*2 ', camera.width/(camera.zoom*2), '| can see the player')
+            if self.state == 'IDLE':
+                if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*2): #условие для начала погони
+                    print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /zoom*2 ', camera.width/(camera.zoom*2), '| can see the player')
                 
-                if self.detect_timer == None:
-                    self.detect_timer = time.time()
+                    if self.detect_timer == None:
+                        self.detect_timer = time.time()
 
-                print('the enemy is processing...')
-                time_passed = time.time() - self.detect_timer
-                if time_passed >= self.detect_delay:
-                    print('start chasing')
-                    self.state = 'CHASE'
+                    print('the enemy is processing...')
+                    time_passed = time.time() - self.detect_timer
+                    if time_passed >= self.detect_delay:
+                        print('start chasing')
+                        self.state = 'CHASE'
 
-        if self.state == 'SEARCH':
+            if self.state == 'SEARCH':
             
-            target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
-            target_location_y = int(self.target.rect.y / 16)
+                target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
+                target_location_y = int(self.target.rect.y / 16)
 
-            self_location_x = int(self.rect.x / 16)
-            self_location_y = int(self.rect.y / 16)
+                self_location_x = int(self.rect.x / 16)
+                self_location_y = int(self.rect.y / 16)
 
-            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
-            #print('can pass = ', can_pass)
+                can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
+                #print('can pass = ', can_pass)
 
-        if self.state == 'CHASE':
-            if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
+            if self.state == 'CHASE':
+                if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
                 
-                found, create_on_y = self.find_place_to_create(camera, platforms)
-                if found:
+                    found, create_on_y = self.find_place_to_create(camera, platforms)
+                    if found:
                     
-                    self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
-                else:
-                    return
+                        self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
+                    else:
+                        return
 
-            target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
-            target_location_y = int(self.target.rect.y / 16)
+                target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
+                target_location_y = int(self.target.rect.y / 16)
 
-            self_location_x = int(self.rect.x / 16)
-            self_location_y = int(self.rect.y / 16)
+                self_location_x = int(self.rect.x / 16)
+                self_location_y = int(self.rect.y / 16)
+                print('self loc y', self_location_y)
 
-            can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
+                can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
 
+
+        elif self.type == 'WOLF':
+            if self.rect.x <= self.target.rect.x:
+                self.move(-1)
+            elif self.rect.x > self.target.rect.x:
+                self.move(1)
+            if self.target.rect.y - self.target.rect.y < 5:
+                self.jump()
             
+
+
     def find_place_to_create(self, camera, platforms):
         check_rect = pygame.Rect(self.target.rect.x-int(camera.width/(camera.zoom*4)), self.target.rect.y, self.rect.width, self.rect.height)
         for platform in platforms:
@@ -270,12 +323,16 @@ class Enemy(pygame.sprite.Sprite):
         
         for check_x in range(self_location_x, target_location_x, step):
             if level[check_y][check_x] == -1:
-                if level[check_y+1][check_x] == 0: #way is free with a floor
+                if level[check_y+1][check_x] in range(16): #way is free with a floor
                     road_found_x += 1
                 else: #way is free but no floor, starting to search for the floor
                     check_y += 1
-                    while level[check_y][check_x] != 0:
+                    print('search for the floor on ', check_y)
+                    while level[check_y][check_x] not in range(16):
+                        print('on ', check_y)
                         check_y += 1
+                        if check_y >= 50:
+                            print('floor not found, cannot chase')
                 self.move_x(step)
             else: #block ahead
                 if level[check_y-2][check_x] == -1: #the second tile from above is free

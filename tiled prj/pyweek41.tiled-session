@@ -17,19 +17,19 @@
             }
         },
         "1.tmx": {
-            "scale": 1,
+            "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1682,
-                "y": 597.5
+                "x": 295.3333333333333,
+                "y": 608.3333333333333
             }
         },
         "2.tmx": {
-            "scale": 0.125,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2488,
-                "y": 264
+                "x": 587.8787878787879,
+                "y": 507.5757575757575
             }
         },
         "placeholder day.tsx": {

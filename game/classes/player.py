@@ -56,11 +56,9 @@ class Player(pygame.sprite.Sprite):
                 self.anim = 'run'
                 if self.direction == 1:
                     self.animation = set_animation('player_right_' + self.anim)
-                    print('self animation ', self.animation)
 
                 elif self.direction == 0:
                     self.animation = set_animation('player_left_' + self.anim)
-                    print('self animation ', self.animation)
 
 
         
