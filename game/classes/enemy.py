@@ -80,7 +80,6 @@ class Enemy(pygame.sprite.Sprite):
         if not self.alive or not self.target.alive:
             return
 
-        print('enemy: ', self.rect.x, self.rect.y)
 
         # гравитация
         if not self.on_ground or self.on_ground:
@@ -150,17 +149,17 @@ class Enemy(pygame.sprite.Sprite):
             self_location_y = int(self.rect.y / 16)
 
             can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
-            print('can pass = ', can_pass)
+            #print('can pass = ', can_pass)
 
         if self.state == 'CHASE':
             if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
-                print('trigger despawn')
+                
                 found, create_on_y = self.find_place_to_create(camera, platforms)
                 if found:
-                    print('found place, spawning enemy')
+                    
                     self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
                 else:
-                    print('COULD NOT FIND A SPACE TO CREATE THE ENEMY')
+                    return
 
             target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
             target_location_y = int(self.target.rect.y / 16)
@@ -169,7 +168,6 @@ class Enemy(pygame.sprite.Sprite):
             self_location_y = int(self.rect.y / 16)
 
             can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
-            print('can pass = ', can_pass)
 
             
     def find_place_to_create(self, camera, platforms):
@@ -222,7 +220,6 @@ class Enemy(pygame.sprite.Sprite):
                     #print('cannot reach ', self.cannot_reach_count)
                     #set target (create some sort of target in the oposite direction)
                     if self.cannot_reach_count == 1000:
-                        print('cannot reach count 1000')
                         return False
 
 

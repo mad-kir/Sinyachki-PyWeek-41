@@ -186,12 +186,9 @@ def level_update(number, camera, screen, markers): ######## СЮДА ДОБАВ�
             return trigger_next_level
 
     elif number == 1:
-        print('level 1')
         for marker in markers:
             if marker.type == 'NEXTLEVEL':
-                print('marker NEXTLEVEL')
                 if marker.is_triggered:
-                    print('IS TRIGGERED')
                     trigger_next_level = True
                     camera.fade_out(screen, (0, 0, 0))
                     return trigger_next_level

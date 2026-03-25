@@ -1,6 +1,7 @@
 import pygame
 
 from windows.quit_window import game_quit
+from animation_manager import set_animation
 
 
 class Player(pygame.sprite.Sprite):
@@ -37,8 +38,34 @@ class Player(pygame.sprite.Sprite):
 
         self.alive = True
 
+        self.animation = set_animation('player_right_idle')
+        self.anim = 'idle'
+        self.frame = 0
+        self.play_speed = 10 #каждые n кадров меняется фрейм анимации
+        self.wait_play = 0
+
+        self.direction = 1
+
     def update(self,screen, platforms, items, camera, enemy):
 
+        #смена кадров текущей анимации
+        self.image = pygame.image.load(self.animation[self.frame])
+        #print('current frame', self.frame)
+        if self.frame < len(self.animation)-1:
+            print('wait play ', self.wait_play)
+            if self.wait_play >= self.play_speed:
+                self.frame +=1
+                self.wait_play = 0
+            else:
+                self.wait_play += 1
+        else:
+            if self.wait_play >= self.play_speed:
+                self.frame = 0
+                self.wait_play = 0
+            else:
+                self.wait_play += 1
+
+        #обработка контролируемого прыжка
         if self.jumping and self.jump_count < self.jump_count_max:
             self.jump_count += 1
             self.velocity_y = self.jump_power + (self.jump_count / self.jump_count_max)
@@ -152,13 +179,34 @@ class Player(pygame.sprite.Sprite):
             return True
             
         return False
-
-    def jump_stop(self):
-        if self.jumping:
-            self.jumping = False
-
-
+    
+    
     """
     СЮДА ДОБАВИТЬ ЗВУКИ ПРЫЖКОВ
     """
 
+
+    def jump_stop(self): #для контролируемой силы прыжка
+        if self.jumping:
+            self.jumping = False
+
+
+
+
+    def animation_player(self, direction=1, anim='idle'):
+        
+        if direction == self.direction:
+            if anim == self.anim:
+                return
+        
+        else:
+            if direction == 1:
+                print('PLAYER WATCHING RIGHT')
+                animation = set_animation('player_right_' + anim)
+
+            elif direction == 0:
+                print('PLAYER WATCHING LEFT')
+                animation = set_animation('player_left_' + anim)
+
+        self.animation = animation
+        self.direction = direction
