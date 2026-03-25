@@ -36,18 +36,23 @@ def change_level(number, screen, camera):
 
     background_color = set_background(number) #пока цвет, потом заменить на картинку
     
-    platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level = load_level(number, tile_size, camera, screen) 
+    platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = load_level(number, tile_size, camera, screen) 
     
     camera.set_bounds(level_width, level_height)
 
     if enemy:
         enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'IDLE', player, level) #заспавнить врага
 
+    
+    if len(mobs) >0:
+        for i in range(len(mobs)):
+            mobs[i].create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, level) #заспавнить врага"""
+
     screen.fill(background_color)
 
     
 
-    return background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level
+    return background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level
 
 
 
@@ -78,7 +83,7 @@ def main():
     #camera.set_bounds(level_width, level_height)
     #enemy.create_enemy(enemy_spawn_xy[0], enemy_spawn_xy[1], 'CHASE', player, level) #заспавнить врага и назначить следить за игроком
 
-    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(current_level, screen, camera)
 
     running = True
 
@@ -100,7 +105,7 @@ def main():
                         running = False
 
                 if event.key == pygame.K_TAB:
-                    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
+                    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
                     current_level = 1
 
             if event.type == pygame.KEYUP:
@@ -164,7 +169,7 @@ def main():
             should_reset = dead_window.game_over(screen, screen_width, screen_height) #enter не всегда срабатывает с первого раза
 
             if should_reset:
-                background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+                background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(current_level, screen, camera)
 
 
         #---ОБНОВЛЕНИЕ ИГРЫ---
@@ -185,7 +190,8 @@ def main():
 
         if trigger_next_level:
             current_level += 1
-            background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level = change_level(current_level, screen, camera)
+            background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(current_level, screen, camera)
+            trigger_next_level = False
         
 
         player.update(screen, platforms, items, camera, enemy)
@@ -197,7 +203,7 @@ def main():
 
         if len(mobs)>0:
             for mob in mobs:
-                mob.update(platforms, markers, camera, player)
+                mob.update(platforms, markers, camera, player, screen)
         
         if trigger_next_level:
             camera.fade_in(screen, (0, 0, 0), background_color, platforms, items, player)

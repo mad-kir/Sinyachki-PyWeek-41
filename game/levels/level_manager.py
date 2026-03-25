@@ -35,6 +35,7 @@ def load_level(level_number, tile_size, camera, screen):
     enemy_spawn_xy = None
 
     mobs = []
+    mobs_spawn_xy = []
 
     for row in range(len(level)):
         for col in range(len(level[row])):
@@ -92,8 +93,11 @@ def load_level(level_number, tile_size, camera, screen):
                     image = pygame.Surface((tile_size*2, tile_size))
                     image.fill(placeholder_color)
                 
+                mobs_spawn_xy.append([col*tile_size, row*tile_size])
                 mobs.append(Enemy(tile_size*2, tile_size, image, 'WOLF'))
-                enemy_spawn_xy = [col*tile_size, row*tile_size]
+
+                
+                #enemy_spawn_xy = [col*tile_size, row*tile_size]
 
             if level[row][col] == 35: #терновый куст
 
@@ -105,8 +109,10 @@ def load_level(level_number, tile_size, camera, screen):
                     image = pygame.Surface((tile_size, tile_size))
                     image.fill(placeholder_color)
                 
+                
+                mobs_spawn_xy.append([col*tile_size, row*tile_size])
                 mobs.append(Enemy(tile_size, tile_size, image, 'THORNS'))
-                enemy_spawn_xy = [col*tile_size, row*tile_size]
+                #enemy_spawn_xy = [col*tile_size, row*tile_size]
             
             #загрузка маркеров
             if level[row][col] == 80: #триггер перехода на следующий уровень
@@ -300,7 +306,7 @@ def load_level(level_number, tile_size, camera, screen):
 
 
     #camera.fade_in(screen)
-    return platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, level
+    return platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level
 
 def set_background(number):
     '''

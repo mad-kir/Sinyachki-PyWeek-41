@@ -59,7 +59,7 @@ class Enemy(pygame.sprite.Sprite):
     def destroy_enemy(self):
         self.alive = False
         self.rect = pygame.Rect(0, 0, 0, 0)
-        print('enemy destroyed')
+        print('enemy ', self.type, ' destroyed')
         
     def create_enemy(self, x, y, state, target, level):
         self.alive = True
@@ -76,7 +76,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.level = level
 
-        print('enemy spawned on ', self.x, self.y)
+        print('enemy ', self.type, ' spawned on ', self.x, self.y)
 
     # метод движения по горизонтали
 
@@ -93,12 +93,19 @@ class Enemy(pygame.sprite.Sprite):
             self.velocity_y = self.jump_power
             self.on_ground = False
     
-    def update(self, platforms, markers, camera, player):
-        print(self.type, self.rect.x)
+    def update(self, platforms, markers, camera, player, screen=None):
+
         if not self.alive or not self.target.alive:
             return
 
         if self.type == 'THORNS':
+            self.animation = []
+            self.anim = None
+            
+            self.image = pygame.image.load('images/tileset/_35.png')
+            rect_transformed, image_transformed = camera.apply(self)
+            screen.blit(image_transformed, rect_transformed)
+            
             if self.rect.colliderect(self.target.rect):
                 self.target.alive = False
             return
@@ -172,7 +179,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.frame = 0
                 self.wait_play = 0
 
-
+        if self.type == 'THORNS':
+            print('AAAAAAAAAAAAAAAAAAAAAAAAAAA')
         #смена кадров текущей анимации
         self.image = pygame.image.load(self.animation[self.frame])
         #print('current frame', self.frame)
