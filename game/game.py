@@ -94,7 +94,7 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     to_menu = pause(screen, screen_width, screen_height)
                     if to_menu == True:
-                        print('to menu is ', to_menu)
+                        #print('to menu is ', to_menu)
                         to_menu = False
                         running = False
 
@@ -105,6 +105,10 @@ def main():
             if event.type == pygame.KEYUP:
                 if event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
                     player.jump_stop()
+                if event.key in (pygame.K_RIGHT, pygame.K_d):
+                    player.animation_player(1)
+                if event.key in (pygame.K_LEFT, pygame.K_a):
+                    player.animation_player(0)
 
 
         
@@ -114,11 +118,12 @@ def main():
         player.velocity_x = 0
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             player.velocity_x = -player.speed
+            player.animation_player(0, 'run')
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.velocity_x = player.speed
+            player.animation_player(1, 'run')
 
         if jump_pressed:
-            print('jump_pressed')
             player.jump()
 
         
@@ -136,36 +141,29 @@ def main():
 
             for platform in platforms:
 
-                platform_rect_transformed = camera.apply(platform)
-                platform_image_transformed = pygame.transform.scale(platform.image, (32, 32))
+                platform_rect_transformed, platform_image_transformed = camera.apply(platform)
                 screen.blit(platform_image_transformed, platform_rect_transformed)
 
             for marker in markers:
-                marker_rect_transformed = camera.apply(marker)
-                marker_image_transformed = pygame.transform.scale(marker.image, (32, 32))
+                marker_rect_transformed, marker_image_transformed = camera.apply(marker)
                 screen.blit(marker_image_transformed, marker_rect_transformed)
 
             for item in items:
-                item_rect_transformed = camera.apply(item)
-                item_image_transformed = pygame.transform.scale(item.image, (32, 32))
+                item_rect_transformed, item_image_transformed = camera.apply(item)
                 if item.alive:
                     screen.blit(item_image_transformed, item_rect_transformed)
         
-            player_rect_transformed = camera.apply(player)
-            player_image_transformed = pygame.transform.scale(player.image, (32, 32))
+            player_rect_transformed, player_image_transformed = camera.apply(player)
             screen.blit(player_image_transformed, player_rect_transformed)
 
             if enemy:
-                enemy_rect_transformed = camera.apply(enemy)
-                enemy_image_transformed = pygame.transform.scale(enemy.image, (32, 32))
+                enemy_rect_transformed, enemy_image_transformed = camera.apply(enemy)
                 screen.blit(enemy_image_transformed, enemy_rect_transformed)
         
         if not player.alive:
-            print('triggered player not alive')
             should_reset = dead_window.game_over(screen, screen_width, screen_height) #enter не всегда срабатывает с первого раза
 
             if should_reset:
-                print('reset level')
                 background_color, platforms, markers, items, level_width, level_height, player, enemy, enemy_spawn_xy, level = change_level(current_level, screen, camera)
 
 
@@ -199,7 +197,6 @@ def main():
 
 while True:
     game_start = menu_window.show(screen, screen_width, screen_height)
-    print('game start is ', game_start)
     if game_start == True:
         game_start = False
         running = True

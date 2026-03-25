@@ -49,22 +49,22 @@ class Item(pygame.sprite.Sprite):
                 if self.type == 'FOREST':
                     
                     dw_surf, dw_rect = dialogue_window.show(screen, camera, self, 'Press ENTER')
-                    dw_rect_transformed = camera.apply(dw_rect)
-                    screen.blit(dw_surf, dw_rect_transformed)
+                    dw_rect_transformed,  dw_surf_transformed = camera.apply(dw_rect, dw_surf)
+                    screen.blit(dw_surf_transformed, dw_rect_transformed)
 
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
 
                             dw_surf, dw_rect = dialogue_window.show(screen, camera, player, 'I shouldn’t walk in the forest — it’s too easy to get lost there.')
-                            dw_rect_transformed = camera.apply(dw_rect)
-                            screen.blit(dw_surf, dw_rect_transformed)
+                            dw_rect_transformed,  dw_surf_transformed = camera.apply(dw_rect, dw_surf)
+                            screen.blit(dw_surf_transformed, dw_rect_transformed)
 
                 if self.type == 'BUSH': 
                     from levels.level_manager import count_berries
 
-                    dw_surf, dw_rect = dialogue_window.show(screen, camera, self, 'Press ENTER')
-                    dw_rect_transformed = camera.apply(dw_rect)
-                    screen.blit(dw_surf, dw_rect_transformed)
+                    dw_surf, dw_rect = dialogue_window.show(screen, camera, self, 'Press ENTER')  #ДИАЛОГОВЫЕ ОКНА СТАЛИ ОГРОМНЫМИ ПОКА ПЫТАЛАСЬ ПОФИКСИТЬ ЗУМ КАМЕРЫ
+                    dw_rect_transformed,  dw_surf_transformed = camera.apply(dw_rect, dw_surf)
+                    screen.blit(dw_surf_transformed, dw_rect_transformed)
 
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
