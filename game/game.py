@@ -14,6 +14,8 @@ from classes.camera import Camera
 from classes.enemy import Enemy
 from classes.markers import Marker
 
+print('sumochka pochini nout')
+
 running = False
 
 current_level = 0
