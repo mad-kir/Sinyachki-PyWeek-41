@@ -25,7 +25,13 @@ animations = {
     'enemy_left_jump' : ['enemy_left_3.png'],
     'enemy_right_fly' : ['enemy_4.png'],
     'enemy_left_fly' : ['enemy_left_2.png'],
-    'bat' : []
+    'bat' : [],
+    'wolf_right_idle' : ['wolf_0.png'],
+    'wolf_left_idle' : ['wolf_left_0.png'],
+    'wolf_right_run' : ['wolf_0.png', 'wolf_1.png'],
+    'wolf_left_run' : ['wolf_left_0.png', 'wolf_left_1.png'],
+    'wolf_right_jump' : ['wolf_1.png'],
+    'wolf_left_jump' : ['wolf_left_1.png']
     }
 
 def set_animation(name):

@@ -145,7 +145,7 @@ class Camera:
             #print('got platforms, items, player = ', platforms, items, player)
             self.render_scene(screen, background_color, platforms, items, player)
         
-        duration = 1 #секунд
+        duration = 0.5 #секунд
         total_frames = int(duration * 60)
 
         #print('total frames ', total_frames)

@@ -22,8 +22,13 @@ class Marker(pygame.sprite.Sprite):
 
         self.is_triggered = False
 
+        self.alive = True
+
     def update(self, screen, player, items, level):
         
+        if not self.alive:
+            return
+
         if self.rect.colliderect(player.rect):
             self.is_triggered = True
             print('triggered marker. is triggered = ', self.is_triggered)

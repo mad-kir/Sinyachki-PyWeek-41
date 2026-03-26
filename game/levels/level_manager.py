@@ -90,11 +90,11 @@ def load_level(level_number, tile_size, camera, screen):
 
                 except:
                     print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
-                    image = pygame.Surface((tile_size*2, tile_size))
+                    image = pygame.Surface((tile_size*2, tile_size*2))
                     image.fill(placeholder_color)
                 
                 mobs_spawn_xy.append([col*tile_size, row*tile_size])
-                mobs.append(Enemy(tile_size*2, tile_size, image, 'WOLF'))
+                mobs.append(Enemy(tile_size*2, tile_size*2, image, 'WOLF'))
 
                 
                 #enemy_spawn_xy = [col*tile_size, row*tile_size]
@@ -137,10 +137,66 @@ def load_level(level_number, tile_size, camera, screen):
                 
                 markers.append(Marker(col*tile_size, row*tile_size, tile_size, tile_size*6, image, 'TRIGGER_2'))
 
+            if level[row][col] == 83: #триггер действий 2
+
+                image = pygame.Surface((tile_size, tile_size*6)) #16x96
+                image.fill(placeholder_color)
+                
+                markers.append(Marker(col*tile_size, row*tile_size, tile_size, tile_size*6, image, 'TRIGGER_3'))
+
+            if level[row][col] == 84: #триггер действий 2
+
+                image = pygame.Surface((tile_size, tile_size*6)) #16x96
+                image.fill(placeholder_color)
+                
+                markers.append(Marker(col*tile_size, row*tile_size, tile_size, tile_size*6, image, 'TRIGGER_4'))
+
             
 
             #загрузка интерактивных предметов
-            if level[row][col] == 22: #forest
+            if level[row][col] == 16: #bridge 1
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size*10, tile_size*10))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col * tile_size, row * tile_size - (tile_size*10 - tile_size), tile_size*10, tile_size*10, image, 'BRIDGE_1', level_number, markers, can_interact=False, can_pass=False))
+            if level[row][col] == 18: #bridge 2
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size*10, tile_size*10))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col * tile_size, row * tile_size - (tile_size*10 - tile_size), tile_size*10, tile_size*10, image, 'BRIDGE_2', level_number, markers, can_interact=False, can_pass=False))
+            if level[row][col] == 20: #bridge 3
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size*10, tile_size*10))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col * tile_size, row * tile_size - (tile_size*10 - tile_size), tile_size*10, tile_size*10, image, 'BRIDGE_3', level_number, markers, can_interact=False, can_pass=False))
+            if level[row][col] == 22: #bridge 4
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size*10, tile_size*10))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col * tile_size, row * tile_size - (tile_size*10 - tile_size), tile_size*10, tile_size*10, image, 'BRIDGE_4', level_number, markers, can_interact=False, can_pass=False))
+
+
+            if level[row][col] == 23: #forest
 
                 try:
                     image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
@@ -182,6 +238,42 @@ def load_level(level_number, tile_size, camera, screen):
                     image.fill(placeholder_color)
                 
                 items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'BUSH', level_number, markers, can_interact=False))
+
+            if level[row][col] == 64: #lever 1
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'LEVER_1', level_number, markers, can_interact=True))
+
+            if level[row][col] == 66: #lever 2
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'LEVER_2', level_number, markers, can_interact=True))
+
+            if level[row][col] == 68: #lever 3
+
+                try:
+                    image = pygame.image.load('images/tileset/_' + str(level[row][col]) + '.png')
+                
+                except:
+                    print('failed to load textures on tile ', row, col, ' with index ', level[row][col], '. Filling with pink color instead')
+                    image = pygame.Surface((tile_size, tile_size))
+                    image.fill(placeholder_color)
+                
+                items.append(Item(col*tile_size, row*tile_size, tile_size, tile_size, image, 'LEVER_3', level_number, markers, can_interact=True))
 
             if level[row][col] == 96: #tree big 1
 

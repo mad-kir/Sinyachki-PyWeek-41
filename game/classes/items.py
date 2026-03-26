@@ -45,6 +45,10 @@ class Item(pygame.sprite.Sprite):
                         self.can_interact = False
                         self.alive = False
 
+
+
+
+
         #обработка столкновений
         if self.interact_rect.colliderect(player.rect):
             if self.can_interact:

@@ -1,6 +1,7 @@
 import pygame
 
 import sys
+import time
 
 pygame.init()
 
@@ -45,8 +46,13 @@ def change_level(number, screen, camera):
 
     
     if len(mobs) >0:
-        for i in range(len(mobs)):
-            mobs[i].create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, level) #заспавнить врага"""
+        if current_level == 2:
+            for i in range(len(mobs)):
+                mobs[i].create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, level) 
+                mobs[i].destroy_enemy() 
+        else:
+            for i in range(len(mobs)):
+                mobs[i].create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, level) 
 
     screen.fill(background_color)
 
@@ -162,9 +168,15 @@ def main():
             player_rect_transformed, player_image_transformed = camera.apply(player)
             screen.blit(player_image_transformed, player_rect_transformed)
 
+            if len(mobs) > 0:
+                for mob in mobs:
+                    mob_rect_transformed, mob_image_transformed = camera.apply(mob)
+                    screen.blit(mob_image_transformed, mob_rect_transformed)
+
             if enemy:
                 enemy_rect_transformed, enemy_image_transformed = camera.apply(enemy)
                 screen.blit(enemy_image_transformed, enemy_rect_transformed)
+
         
         if not player.alive:
             should_reset = dead_window.game_over(screen, screen_width, screen_height) #enter не всегда срабатывает с первого раза
@@ -177,9 +189,34 @@ def main():
         
         for marker in markers:
             marker.update(screen, player, items, current_level)
-            if marker.is_triggered and marker.type == 'NEXTLEVEL':
-                trigger_next_level = level_update(current_level, camera, screen, markers, items)
-                marker.is_triggered = False
+            if marker.is_triggered:
+                if marker.type == 'NEXTLEVEL':
+                    trigger_next_level = level_update(current_level, camera, screen, markers, items)
+                    marker.is_triggered = False
+
+                if marker.type == 'TRIGGER_1':
+                    marker.is_triggered = False
+
+                    if current_level == 2: #маркер в начале уровня, спавнит волков слева и триггерит вампира справа
+                        marker.alive = False
+
+                        if enemy.detect_timer == None:
+                            enemy.detect_timer = time.time()
+
+                        print('the enemy is processing...')
+                        time_passed = time.time() - enemy.detect_timer
+                        if time_passed >= enemy.detect_delay:
+                            print('start chasing')
+                            enemy.state = 'CHASE'
+
+                        i = 0
+                        for mob in mobs:
+                            if mob.type == 'WOLF':
+                                mob.create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, current_level)
+                                i += 1
+                            if i == 2:
+                                break
+
 
 
         for item in items:
@@ -191,7 +228,6 @@ def main():
                     item.is_triggered = False
                     #print('trigger level')
                     
-
 
         if trigger_next_level:
             current_level += 1

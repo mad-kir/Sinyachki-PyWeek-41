@@ -1,4 +1,3 @@
-from re import I, L
 import pygame
 
 import numpy as np
@@ -34,7 +33,7 @@ class Enemy(pygame.sprite.Sprite):
         self.jump_power = -7
         self.max_fall_speed = 10
 
-        self.alive = False
+        self.alive = True
 
         self.type = type
 
@@ -48,7 +47,13 @@ class Enemy(pygame.sprite.Sprite):
 
         level = np.array([])
 
-        self.animation = set_animation('enemy_right_idle')
+        if self.type == 'VAMPIRE':
+            self.animation = set_animation('enemy_right_idle')
+        if self.type == 'WOLF':
+            self.animation = set_animation('wolf_right_idle')
+        if self.type == 'THORN':
+            self.animation = []
+
         self.anim = 'idle'
         self.frame = 0
         self.play_speed = 5 #каждые n кадров меняется фрейм анимации
@@ -62,7 +67,7 @@ class Enemy(pygame.sprite.Sprite):
         print('enemy ', self.type, ' destroyed')
         
     def create_enemy(self, x, y, state, target, level):
-        self.alive = True
+        self.alive = False
         self.state = state
         self.target = target
 
@@ -98,6 +103,10 @@ class Enemy(pygame.sprite.Sprite):
         if not self.alive or not self.target.alive:
             return
 
+
+        if self.rect.colliderect(self.target.rect): #если касается игрока, убивает
+            self.target.alive = False
+
         if self.type == 'THORNS':
             self.animation = []
             self.anim = None
@@ -106,9 +115,8 @@ class Enemy(pygame.sprite.Sprite):
             rect_transformed, image_transformed = camera.apply(self)
             screen.blit(image_transformed, rect_transformed)
             
-            if self.rect.colliderect(self.target.rect):
-                self.target.alive = False
             return
+
 
         #проверка состояний для смены анимации
         if self.type == 'VAMPIRE':
@@ -289,12 +297,22 @@ class Enemy(pygame.sprite.Sprite):
 
 
         elif self.type == 'WOLF':
-            if self.rect.x <= self.target.rect.x:
-                self.move(-1)
+            if self.rect.x < self.target.rect.x:
+                self.move_x(1)
             elif self.rect.x > self.target.rect.x:
-                self.move(1)
-            if self.target.rect.y - self.target.rect.y < 5:
+                self.move_x(-1)
+            else:
+                self.velocity_x = 0
+            
+            if self.on_ground and self.rect.y > self.target.rect.y + 10:
                 self.jump()
+
+            if abs(self.rect.x - self.target.rect.x) > camera.width * 4:
+                self.destroy_enemy()
+
+            #print('wolf is on ', self.rect.x, self.rect.y, ' on ground ', self.on_ground, ' animation ', self.animation)
+
+
             
 
 
@@ -355,5 +373,5 @@ class Enemy(pygame.sprite.Sprite):
                         return False
 
 
-
-
+    def start_chase(self):
+        sss
