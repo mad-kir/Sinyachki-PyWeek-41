@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "3.tmx",
+    "activeFile": "2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -25,11 +25,11 @@
             }
         },
         "2.tmx": {
-            "scale": 2,
+            "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2800.25,
-                "y": 560.25
+                "x": 661.5,
+                "y": 942.5
             }
         },
         "3.tmx": {
@@ -80,9 +80,9 @@
     "recentFiles": [
         "0.tmx",
         "1.tmx",
-        "2.tmx",
-        "tileset.tsx",
         "3.tmx",
+        "tileset.tsx",
+        "2.tmx",
         "4.tmx",
         "placeholder night.tsx",
         "placeholder day.tsx"
