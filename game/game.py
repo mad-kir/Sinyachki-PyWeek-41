@@ -181,10 +181,11 @@ def main():
         for item in items:
             item.update(screen, camera, player, items)
             if item.is_triggered:
-                print('item triggered', current_level, item.type)
+                #print('item triggered', current_level, item.type)
                 if item.type == 'BUSH_BLUE' and current_level == 0:
-                    trigger_next_level = True
-                    print('trigger level')
+                    trigger_next_level = level_update(0, camera, screen, markers, items)
+                    item.is_triggered = False
+                    #print('trigger level')
                     
 
 
@@ -195,7 +196,7 @@ def main():
         
 
         player.update(screen, platforms, items, camera, enemy)
-
+        1
         camera.update(player, screen)
 
         if enemy:
