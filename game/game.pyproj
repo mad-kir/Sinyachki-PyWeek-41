@@ -11,6 +11,10 @@
     <OutputPath>.</OutputPath>
     <Name>game</Name>
     <RootNamespace>game</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <Environment>C:\Program Files\Git\bin
+C:\Program Files\Git\cmd</Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
