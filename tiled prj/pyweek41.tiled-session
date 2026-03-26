@@ -3,33 +3,33 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "2.tmx",
+    "activeFile": "1.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "0.tmx": {
-            "scale": 0.75,
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 800.6666666666666,
-                "y": 399.33333333333326
+                "x": 257,
+                "y": 645.75
             }
         },
         "1.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 3181.333333333333,
-                "y": 400.33333333333326
+                "x": 1491.3333333333333,
+                "y": 608.3333333333333
             }
         },
         "2.tmx": {
-            "scale": 0.33,
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 587.8787878787879,
-                "y": 507.5757575757575
+                "x": 606,
+                "y": 981
             }
         },
         "placeholder day.tsx": {
@@ -62,9 +62,9 @@
     "project": "pyweek41.tiled-project",
     "recentFiles": [
         "0.tmx",
-        "1.tmx",
         "tileset.tsx",
         "2.tmx",
+        "1.tmx",
         "placeholder night.tsx",
         "placeholder day.tsx"
     ],

@@ -109,6 +109,7 @@ class Camera:
             screen.blit(enemy_image_transformed, enemy_rect_transformed)
 
 
+
     #эффекты
 
     def fade_out(self, screen, color=(0, 0, 0)):
@@ -133,6 +134,8 @@ class Camera:
 
     def fade_in(self, screen, color=(0, 0, 0), background_color=None, platforms=None, items=None, player=None):
         #print('triggered fade in')
+
+        print('self x y ', self.camera.x, self.camera.y)
         self.fade_surface = pygame.Surface((self.width, self.height))
         self.fade_surface = self.fade_surface.convert()
         self.fade_surface.fill(color)

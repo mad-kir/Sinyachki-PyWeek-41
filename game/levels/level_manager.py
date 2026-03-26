@@ -305,7 +305,7 @@ def load_level(level_number, tile_size, camera, screen):
 
 
 
-    #camera.fade_in(screen)
+    camera.fade_in(screen, (0, 0, 0), set_background(level_number), platforms, items, player)
     return platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level
 
 def set_background(number):
@@ -320,15 +320,14 @@ def set_background(number):
 
     return color
 
-def level_update(number, camera, screen, markers): ######## СЮДА ДОБАВИТЬ ЗВУКИ ПЕРЕХОДА НА СЛЕДУЮЩИЙ УРОВЕНЬ
+def level_update(number, camera, screen, markers, items): ######## СЮДА ДОБАВИТЬ ЗВУКИ ПЕРЕХОДА НА СЛЕДУЮЩИЙ УРОВЕНЬ
 
     if number == 0:
-        if berries_count == 3:
-            trigger_next_level = True
-            camera.fade_out(screen, (255, 255, 255))
-            camera.fade_out(screen, (255, 0, 0))
-            camera.fade_out(screen, (0, 0, 0))
-            return trigger_next_level
+        trigger_next_level = True
+        camera.fade_out(screen, (255, 255, 255))
+        camera.fade_out(screen, (255, 0, 0))
+        camera.fade_out(screen, (0, 0, 0))
+        return trigger_next_level
 
     elif number == 1:
         for marker in markers:
