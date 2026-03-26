@@ -12,8 +12,8 @@ class Camera:
 
         self.zoom = 3
 
-        self.dead_zone_width = 150
-        self.dead_zone_height = 100
+        self.dead_zone_width = 70
+        self.dead_zone_height = 40
 
         #эффекты
         #self.fade_alpha = 0

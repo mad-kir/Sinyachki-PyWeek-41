@@ -315,8 +315,10 @@ def set_background(number):
 
     if number == 0:
         color = pygame.color.Color(50, 200, 200)
-    else:
+    elif number == 1:
         color = pygame.color.Color(163, 70, 56)
+    else:
+        color = pygame.color.Color(20, 0, 100)
 
     return color
 

@@ -105,8 +105,9 @@ def main():
                         running = False
 
                 if event.key == pygame.K_TAB:
-                    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(1, screen, camera) #ОТЛАДКА, потом удалить
-                    current_level = 1
+                    current_level +=1
+                    background_color, platforms, markers, items, level_width, level_height, player, enemy, mobs, enemy_spawn_xy, mobs_spawn_xy, level = change_level(current_level, screen, camera) #ОТЛАДКА, потом удалить
+                    
 
             if event.type == pygame.KEYUP:
                 if event.key in (pygame.K_SPACE, pygame.K_UP, pygame.K_w):
@@ -176,6 +177,9 @@ def main():
         
         for marker in markers:
             marker.update(screen, player, items, current_level)
+            if marker.is_triggered and marker.type == 'NEXTLEVEL':
+                trigger_next_level = level_update(current_level, camera, screen, markers, items)
+                marker.is_triggered = False
 
 
         for item in items:
@@ -196,7 +200,7 @@ def main():
         
 
         player.update(screen, platforms, items, camera, enemy)
-        1
+        
         camera.update(player, screen)
 
         if enemy:

@@ -42,7 +42,7 @@ class Enemy(pygame.sprite.Sprite):
         self.state = 'IDLE'
 
         self.detect_timer = None
-        self.detect_delay = 1
+        self.detect_delay = 1 #как долго в секундах, прежде чем начнёт погоню после появления в пределах камеры
 
         self.cannot_reach_count = 0
 
@@ -67,7 +67,7 @@ class Enemy(pygame.sprite.Sprite):
         self.target = target
 
         if self.type == 'WOLF':
-            self.speed = 5
+            self.speed = 4
             self.jump_power = -4
 
         self.rect = self.image_surface.get_rect()
