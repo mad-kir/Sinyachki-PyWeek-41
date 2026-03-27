@@ -2,6 +2,7 @@ import pygame
 
 import numpy as np
 import time
+import random
 
 import pygame.surface
 
@@ -40,6 +41,7 @@ class Enemy(pygame.sprite.Sprite):
         self.target = None
         self.state = 'IDLE'
 
+        self.can_chase = False
         self.detect_timer = None
         self.detect_delay = 1 #как долго в секундах, прежде чем начнёт погоню после появления в пределах камеры
 
@@ -67,12 +69,12 @@ class Enemy(pygame.sprite.Sprite):
         print('enemy ', self.type, ' destroyed')
         
     def create_enemy(self, x, y, state, target, level):
-        self.alive = False
+        self.alive = True
         self.state = state
         self.target = target
 
         if self.type == 'WOLF':
-            self.speed = 4
+            self.speed = random.choice((2, 3, 3.5))
             self.jump_power = -4
 
         self.rect = self.image_surface.get_rect()
@@ -254,16 +256,17 @@ class Enemy(pygame.sprite.Sprite):
 
             if self.state == 'IDLE':
                 if abs(self.rect.x - self.target.rect.x) < camera.width/(camera.zoom*2): #условие для начала погони
-                    print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /zoom*2 ', camera.width/(camera.zoom*2), '| can see the player')
+                    #print('distance ', abs(self.rect.x - self.target.rect.x), 'camera width /zoom*2 ', camera.width/(camera.zoom*2), '| can see the player')
                 
-                    if self.detect_timer == None:
-                        self.detect_timer = time.time()
+                    if self.can_chase:
+                        if self.detect_timer == None:
+                            self.detect_timer = time.time()
 
-                    print('the enemy is processing...')
-                    time_passed = time.time() - self.detect_timer
-                    if time_passed >= self.detect_delay:
-                        print('start chasing')
-                        self.state = 'CHASE'
+                        print('the enemy is processing...')
+                        time_passed = time.time() - self.detect_timer
+                        if time_passed >= self.detect_delay:
+                            print('start chasing')
+                            self.state = 'CHASE'
 
             if self.state == 'SEARCH':
             
@@ -277,23 +280,24 @@ class Enemy(pygame.sprite.Sprite):
                 #print('can pass = ', can_pass)
 
             if self.state == 'CHASE':
-                if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
+                if self.can_chase:
+                    if abs(self.rect.x - self.target.rect.x) > camera.width/(camera.zoom): #условие для исчезновения и спавна за пределами экрана
                 
-                    found, create_on_y = self.find_place_to_create(camera, platforms)
-                    if found:
+                        found, create_on_y = self.find_place_to_create(camera, platforms)
+                        if found:
                     
-                        self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
-                    else:
-                        return
+                            self.create_enemy(self.target.rect.x-(camera.width/(camera.zoom*0.5)), self.target.rect.y, 'SEARCH', player, self.level)
+                        else:
+                            return
 
-                target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
-                target_location_y = int(self.target.rect.y / 16)
+                    target_location_x = int(self.target.rect.x / 16) #делим на размер тайла
+                    target_location_y = int(self.target.rect.y / 16)
 
-                self_location_x = int(self.rect.x / 16)
-                self_location_y = int(self.rect.y / 16)
-                print('self loc y', self_location_y)
+                    self_location_x = int(self.rect.x / 16)
+                    self_location_y = int(self.rect.y / 16)
+                    print('self loc y', self_location_y)
 
-                can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
+                    can_pass = self.check_platforms(self_location_x, self_location_y, target_location_x, target_location_y, markers)
 
 
         elif self.type == 'WOLF':

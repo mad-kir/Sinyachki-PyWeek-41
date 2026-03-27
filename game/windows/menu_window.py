@@ -34,7 +34,7 @@ def show(screen, screen_width, screen_height):
     while not cont:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_quit(screen, screen_width, screen_height) 
+                finish_process()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     print('got esc while on pause')

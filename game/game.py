@@ -195,29 +195,86 @@ def main():
                     marker.is_triggered = False
 
                 if marker.type == 'TRIGGER_1':
-                    marker.is_triggered = False
+
+                    if current_level == 1:
+                        marker.alive = False
+                            
+                        if enemy.detect_timer == None:
+                            enemy.detect_timer = time.time()
+
+                        print('MARKER: the enemy is processing...')
+                        time_passed = time.time() - enemy.detect_timer
+                        if time_passed >= enemy.detect_delay:
+                            print('MARKER: start chasing')
+                            enemy.state = 'CHASE'
+                            enemy.can_chase = True
+
+                        for item in items:
+                            if item.type == 'FOREST':
+                                item.image_surface.set_alpha(255)
+                                item.can_pass = True
+                                item.can_interact = False
+                                item.alive = False
+
+                    
+                                
 
                     if current_level == 2: #маркер в начале уровня, спавнит волков слева и триггерит вампира справа
-                        marker.alive = False
+                        
 
                         if enemy.detect_timer == None:
                             enemy.detect_timer = time.time()
 
                         print('the enemy is processing...')
                         time_passed = time.time() - enemy.detect_timer
-                        if time_passed >= enemy.detect_delay:
+                        if time_passed >= 3:
                             print('start chasing')
                             enemy.state = 'CHASE'
+                            enemy.can_chase = True
+                            
+                            if marker.alive:
+                                marker.alive = False
+                                i = 0
+                                for mob in mobs:
+                                    if mob.type == 'WOLF':
+                                        mob.create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, current_level)
+                                        i += 1
+                                    if i == 3:
+                                        marker.is_triggered = False
+                                        break
+                
+                if marker.type == 'TRIGGER_2':
+
+                    if current_level == 2: #деспавнит первых трёх волков для экономии ресурсов, спавнит ещё пять на дне ямы 
+                        marker.alive = False
 
                         i = 0
                         for mob in mobs:
                             if mob.type == 'WOLF':
+                                mob.destroy_enemy()
+                                i += 1
+
+                                if i == 3:
+                                    break
+
+                        for mob in mobs:
+                            if mob.type == 'WOLF':
                                 mob.create_enemy(mobs_spawn_xy[i][0], mobs_spawn_xy[i][1], 'IDLE', player, current_level)
                                 i += 1
-                            if i == 2:
-                                break
 
-
+                                if i == 8:
+                                    marker.is_triggered = False
+                                    break
+                            
+                if marker.type == 'MARKER_3': #затухание музыки, потому что погоня прекратилась (вампир задеспавнен)
+                    print('marker 3 triggered')
+                    if current_level == 2:
+                        enemy.destroy_enemy()
+                        enemy.state = 'IDLE'
+                        enemy.can_chase = False
+                        marker.alive = False
+                        marker.is_triggered = False
+                        break
 
         for item in items:
             item.update(screen, camera, player, items)

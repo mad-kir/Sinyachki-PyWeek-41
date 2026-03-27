@@ -35,15 +35,15 @@ class Item(pygame.sprite.Sprite):
         if not self.alive:
             return
 
-        #обработка маркеров
-        if self.type == 'FOREST':
+        #обработка маркеров (перенесла в game)
+        """if self.type == 'FOREST':
             if self.level == 1:
                 for marker in self.markers:
                     if marker.is_triggered and marker.type == 'TRIGGER_1':
                         self.image_surface.set_alpha(255)
                         self.can_pass = True
                         self.can_interact = False
-                        self.alive = False
+                        self.alive = False"""
 
 
 
